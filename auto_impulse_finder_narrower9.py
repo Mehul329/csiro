@@ -1,13 +1,17 @@
 import numpy as np
 from sigpyproc.readers import FilReader as F
+import argparse
 
 #%% Input
-filename = '2018-07-02-03:55:09' #takes the filename
+a = argparse.ArgumentParser()
+a.add_argument('-f', type = str, help = 'Type the filename')
+args = a.parse_args()
+filename = args.f #takes the filename
 kernel_lst = np.linspace(4,16,16-4+1).astype(int) #take the list of bin sizes
 dm = np.linspace(110,120,120-110+1).astype(int) #take the list of possible dm's
 
 #%%
-data = F(filename+'.fil')
+data = F(filename)
 nsamps = data.header.nsamples
 data = data.read_block(0, nsamps)
 
