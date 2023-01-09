@@ -7,6 +7,8 @@ a = argparse.ArgumentParser()
 a.add_argument('-f', type = str, help = 'Type the filename')
 a.add_argument('-k', type = int, nargs = 3, help = 'Bins list: Start, End, Steps')
 a.add_argument('-dm', type = int, nargs = 3, help = 'DM list: Start, End, Steps')
+a.add_argument('-fl_j', '--flattening_jump', type=int, help="Jump size to use when flattening the time series (def = 100", default=100)
+a.add_argument("-t", '--threshold', type=float, help='S/N threshold for selecting candidates (def = 8)', default=8)
 
 args = a.parse_args()
 filename = args.f #takes the filename
@@ -23,7 +25,7 @@ data = data.read_block(0, nsamps)
 
 n_chans = data.header.nchans
 max_f = data.header.fch1
-min_f = max_f + data.header.foff * n_chans
+min_f = max_f + data.header.foff * (n_chans-1)
 possible_freq = np.linspace(max_f, min_f, n_chans) #different frequency channels
 
 
@@ -34,21 +36,25 @@ possible_a = max_f*((possible_b)**0.5) #possible a's
 #all the channels of the data has been flattened
 time_x = np.linspace(0,nsamps-1, nsamps)
 
-for k in range(len(data)):
-    model = np.poly1d(np.polyfit(time_x, data[k], 2))
-    c_ = model[0]
-    b_ = model[1]
-    a_ = model[2]
-    y = a_*time_x**2 + b_*time_x + c_
-    data[k] = data[k] - y
+def flatten(time_series):
+    xx = np.arange(len(time_series))
+    model = np.poly1d(np.polyfit(xx, time_series, 2 ))
+    y = model[2] * xx**2 + model[1] * xx + model[0]
+    return time_series - y
 
-cands = np.array(['Initial Time', 'S/R', 'Bins', 'DM'])
 
+#cands = np.array(['Initial Time', 'S/R', 'Bins', 'DM'])
+SNRs = []
+Bins = []
+DMs = []
+Times = []
+
+new_data = np.empty([n_chans,nsamps])
+threshold = args.threshold
+    
 for i in range(len(possible_a)):
-    print(dm[i])
-    new_data = np.empty([n_chans,nsamps]) 
+    print("DM is : ", dm[i])
     new_data[0] = data[0]
-    spectral_std = []
     for j in range(1, n_chans):
         freq = possible_freq[j]
         new_start = int((possible_a[i]/(freq))**2 - possible_b[i])
@@ -61,31 +67,23 @@ for i in range(len(possible_a)):
     #following calculates the sum of each column
     sum_ = np.average(new_data, axis = 0)
 
-    threshold = 8
-    
-    for kernel in kernel_lst:
-        print(kernel)
-        mvaverage = []
-        
-        for l in range(len(sum_)-(kernel-1)):
-            mvaverage.append(np.average(sum_[l:l+kernel]))
-        
-        mvaverage_arr = np.array(mvaverage)
-        mvaverage_arr /= np.std(mvaverage_arr)
-        in_time = np.transpose(np.where(mvaverage_arr > threshold)) 
-        snr = np.reshape(mvaverage_arr[mvaverage_arr > threshold], np.shape(in_time))
-        bins = kernel * np.ones_like(snr)
-        dm_ = dm[i] * np.ones_like(snr)
-        stack = np.column_stack((in_time, snr, bins, dm_))
-        cands = np.row_stack((cands, stack))
+    flattened_sum = flatten(sum_[::args.flattening_jump])
 
-#%%
-cands = cands[1:,:].astype(float)
-cands = cands[cands[:,0].argsort()] #sorting it with respect to in_time
-in_time = list(cands[:,0])
-SNR = list(cands[:,1]) 
-bins = list(cands[:,2]) 
-DM = list(cands[:,3])
+    rms = flattened_sum.std()
+
+    for kernel in kernel_lst:
+        print("Kernel is: ", kernel)
+
+        mvaverage_arr = np.convolve(flattened_sum, np.ones(kernel), mode='valid') / kernel
+        mvaverage_arr /= rms * np.sqrt(kernel)
+
+        peak_locs = mvaverage_arr > threshold
+        snr = mvaverage_arr[peak_locs]
+        SNRs.extend(list(snr))
+        Bins.extend(list(kernel * np.ones_like(snr)))
+        DMs.extend(list(dm[i] * np.ones_like(snr)))
+        Times.extend( list(np.arange(len(mvaverage_arr))[peak_locs]))
+
 
 #%%
 #this function will group the neighbouring points (used on first_seen_time)
