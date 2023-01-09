@@ -5,10 +5,17 @@ import argparse
 #%% Input
 a = argparse.ArgumentParser()
 a.add_argument('-f', type = str, help = 'Type the filename')
+a.add_argument('-k1', type = int, help = 'Type the initial bin size')
+a.add_argument('-k2', type = int, help = 'Type the last bin size')
+a.add_argument('-k3', type = int, help = 'Type the gap between 2 bins')
+a.add_argument('-d1', type = int, help = 'Type the first DM')
+a.add_argument('-d2', type = int, help = 'Type the last DM')
+a.add_argument('-d3', type = int, help = 'Type the gap between 2 DMs')
+
 args = a.parse_args()
 filename = args.f #takes the filename
-kernel_lst = np.linspace(4,16,16-4+1).astype(int) #take the list of bin sizes
-dm = np.linspace(110,120,120-110+1).astype(int) #take the list of possible dm's
+kernel_lst = np.linspace(args.k1, args.k2, int(1+(args.k2-args.k1)/args.k3)).astype(int) #take the list of bin sizes
+dm = np.linspace(args.d1, args.d2, int(1+(args.d2-args.d1/args.d3))).astype(int) #take the list of possible dm's
 
 #%%
 data = F(filename)
