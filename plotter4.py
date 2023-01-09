@@ -1,13 +1,18 @@
+
 import numpy as np
 import matplotlib.pyplot as plt
 from sigpyproc.readers import FilReader as F
 import pathlib
+import argparse
 
 #%% Input
-filename = '2018-07-02-03:55:09'
+a = argparse.ArgumentParser()
+a.add_argument('-f', type = str, help = 'Type the filename')
+args = a.parse_args()
+filename = args.f
 
 #%%
-candidates = np.load(filename+'.npy')
+candidates = np.load(filename)
 
 def plotter(matrix, dm, imp_start, bins, area):
   
