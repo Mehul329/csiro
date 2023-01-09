@@ -5,17 +5,15 @@ import argparse
 #%% Input
 a = argparse.ArgumentParser()
 a.add_argument('-f', type = str, help = 'Type the filename')
-a.add_argument('-k1', type = int, help = 'Type the initial bin size')
-a.add_argument('-k2', type = int, help = 'Type the last bin size')
-a.add_argument('-k3', type = int, help = 'Type the gap between 2 bins')
-a.add_argument('-d1', type = int, help = 'Type the first DM')
-a.add_argument('-d2', type = int, help = 'Type the last DM')
-a.add_argument('-d3', type = int, help = 'Type the gap between 2 DMs')
+a.add_argument('-k', type = int, nargs = 3, help = 'Bins list: Start, End, Steps')
+a.add_argument('-dm', type = int, nargs = 3, help = 'DM list: Start, End, Steps')
 
 args = a.parse_args()
 filename = args.f #takes the filename
-kernel_lst = np.linspace(args.k1, args.k2, int(1+(args.k2-args.k1)/args.k3)).astype(int) #take the list of bin sizes
-dm = np.linspace(args.d1, args.d2, int(1+(args.d2-args.d1/args.d3))).astype(int) #take the list of possible dm's
+k_start, k_end, k_space = args.k
+dm_start, dm_end, dm_space = args.dm
+kernel_lst = np.linspace(k_start, k_end, int(1+(k_end-k_start)/k_space)).astype(int) #take the list of bin sizes
+dm = np.linspace(dm_start, dm_end, int(1+(dm_end-dm_start)/dm_space)).astype(int) #take the list of possible dm's
 
 #%%
 data = F(filename)
