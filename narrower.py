@@ -1,3 +1,5 @@
+from sklearn import cluster
+
 #%%
 cls_obj = cluster.AgglomerativeClustering(n_clusters=None, compute_full_tree=True, distance_threshold=10)
 clusters = cls_obj.fit(np.column_stack([Times, Bins, DMs])).labels_
