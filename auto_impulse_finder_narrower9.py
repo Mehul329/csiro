@@ -1,12 +1,13 @@
 import numpy as np
 from sigpyproc.readers import FilReader as F
 import argparse
+import matplotlib.pyplot as plt
 
 #%% Input
 a = argparse.ArgumentParser()
-a.add_argument('-f', type = str, help = 'Type the filename')
-a.add_argument('-k', type = int, nargs = 3, help = 'Bins list: Start, End, Steps')
-a.add_argument('-dm', type = int, nargs = 3, help = 'DM list: Start, End, Steps')
+a.add_argument('-f', type = str, help = 'Type the filename', default = '2018-07-02-03:55:09.fil')
+a.add_argument('-k', type = int, nargs = 3, help = 'Bins list: Start, End, Steps', default = [1,10,1])
+a.add_argument('-dm', type = int, nargs = 3, help = 'DM list: Start, End, Steps', default = [10,100,10])
 a.add_argument('-fl_j', '--flattening_jump', type=int, help="Jump size to use when flattening the time series (def = 100", default=100)
 a.add_argument("-t", '--threshold', type=float, help='S/N threshold for selecting candidates (def = 8)', default=8)
 
@@ -36,9 +37,9 @@ possible_a = max_f*((possible_b)**0.5) #possible a's
 #all the channels of the data has been flattened
 time_x = np.linspace(0,nsamps-1, nsamps)
 
-def flatten(time_series):
+def flatten(time_series, interval):
     xx = np.arange(len(time_series))
-    model = np.poly1d(np.polyfit(xx, time_series, 2 ))
+    model = np.poly1d(np.polyfit(xx[::interval], time_series[::interval], 2 ))
     y = model[2] * xx**2 + model[1] * xx + model[0]
     return time_series - y
 
@@ -67,7 +68,7 @@ for i in range(len(possible_a)):
     #following calculates the sum of each column
     sum_ = np.average(new_data, axis = 0)
 
-    flattened_sum = flatten(sum_[::args.flattening_jump])
+    flattened_sum = flatten(sum_, args.flattening_jump)
 
     rms = flattened_sum.std()
 
@@ -76,9 +77,11 @@ for i in range(len(possible_a)):
 
         mvaverage_arr = np.convolve(flattened_sum, np.ones(kernel), mode='valid') / kernel
         mvaverage_arr /= rms * np.sqrt(kernel)
-
+        plt.plot(mvaverage_arr)
+        plt.show()
         peak_locs = mvaverage_arr > threshold
         snr = mvaverage_arr[peak_locs]
+        
         SNRs.extend(list(snr))
         Bins.extend(list(kernel * np.ones_like(snr)))
         DMs.extend(list(dm[i] * np.ones_like(snr)))
@@ -87,6 +90,7 @@ for i in range(len(possible_a)):
 
 #%%
 #this function will group the neighbouring points (used on first_seen_time)
+'''
 def groupBlocks(samp_list, bin_list):
     res = [[0]]
   
@@ -97,7 +101,7 @@ def groupBlocks(samp_list, bin_list):
             res.append([i])
     return res
 
-a = groupBlocks(in_time, bins) 
+a = groupBlocks(Times, Bins) 
 
 #this loop will extract the point that has the maximum S/R among the neighbouring points
 for i in range(len(a)):
@@ -107,18 +111,17 @@ for i in range(len(a)):
         max_value = 0
         max_ind = 0
         for j in range(len(a[i])):
-            if SNR[a[i][j]] > max_value:
-                max_value = SNR[a[i][j]]
+            if SNRs[a[i][j]] > max_value:
+                max_value = SNRs[a[i][j]]
                 max_ind = j
         a[i] = a[i][max_ind]
 
+Times = list(np.array(Times)[a])
+SNRs = list(np.array(Times)[a])
+Bins = list(np.array(Times)[a])
+DMs = list(np.array(Times)[a])
 cands = cands[a]
 cands = cands[cands[:,3].argsort()] #sorting it with respect to DMs
-in_time = list(cands[:,0])
-SNR = list(cands[:,1]) 
-bins = list(cands[:,2]) 
-DM = list(cands[:,3])
-
 #%%
 #this function will group the neighbouring duplicates (used on DMs)
 def groupDuplicates(lst):
@@ -147,4 +150,4 @@ for i in range(len(a)):
 name = np.array(['Initial Time', 'S/R', 'Bins', 'DM'])
 cands = np.row_stack((name, cands))
 np.save(filename, cands)
-
+'''
