@@ -2,6 +2,7 @@ import numpy as np
 from sigpyproc.readers import FilReader as F
 import argparse
 import matplotlib.pyplot as plt
+from sklearn import cluster
 
 #%% Input
 a = argparse.ArgumentParser()
@@ -75,10 +76,8 @@ for i in range(len(possible_a)):
     for kernel in kernel_lst:
         print("Kernel is: ", kernel)
 
-        mvaverage_arr = np.convolve(flattened_sum, np.ones(kernel), mode='valid') / kernel
-        mvaverage_arr /= (np.std(mvaverage_arr))
-        #mvaverage_arr /= (np.std(mvaverage_arr) * np.sqrt(kernel))
-        #mvaverage_arr /= (rms * np.sqrt(kernel))
+        mvaverage_arr = np.convolve(flattened_sum, np.ones(kernel), mode='valid')
+        mvaverage_arr /= (rms * np.sqrt(kernel))
         #plt.plot(mvaverage_arr)
         #plt.show()
         peak_locs = mvaverage_arr > threshold
@@ -93,6 +92,11 @@ fig = plt.figure()
 ax = plt.axes(projection ='3d')
 ax.plot3D(Bins, DMs, Times, '.')
 plt.show()
+
+#%%
+cls_obj = cluster.AgglomerativeClustering(n_clusters=None, compute_full_tree=True, distance_threshold=10)
+clusters = cls_obj.fit(np.column_stack([Times, Bins, DMs])).labels_
+
 
 #%%
 #this function will group the neighbouring points (used on first_seen_time)
