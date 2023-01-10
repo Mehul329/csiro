@@ -2,15 +2,13 @@ import numpy as np
 from sigpyproc.readers import FilReader as F
 import argparse
 #import matplotlib.pyplot as plt
-import time
 
-start = time.time()
 
 #%% Input
 a = argparse.ArgumentParser()
-a.add_argument('-f', type = str, help = 'Type the filename', default = '2018-06-27-04:14:17.fil')
-a.add_argument('-k', type = int, nargs = 3, help = 'Bins list: Start, End, Steps', default = [1,500,1])
-a.add_argument('-dm', type = int, nargs = 3, help = 'DM list: Start, End, Steps', default = [1,1,1])
+a.add_argument('-f', type = str, help = 'Type the filename', default = '2018-06-27-04_14_17.fil')
+a.add_argument('-k', type = int, nargs = 3, help = 'Bins list: Start, End, Steps', default = [1,10,1])
+a.add_argument('-dm', type = int, nargs = 3, help = 'DM list: Start, End, Steps', default = [10,100,10])
 a.add_argument('-fl_j', '--flattening_jump', type=int, help="Jump size to use when flattening the time series (def = 100", default=100)
 a.add_argument("-t", '--threshold', type=float, help='S/N threshold for selecting candidates (def = 8)', default=8)
 
@@ -83,7 +81,7 @@ for i in range(len(possible_a)):
         #plt.show()
         peak_locs = mvaverage_arr > threshold
         snr = mvaverage_arr[peak_locs]
-        '''
+
         SNRs.extend(list(snr))
         Bins.extend(list(kernel * np.ones_like(snr)))
         DMs.extend(list(dm[i] * np.ones_like(snr)))
@@ -92,6 +90,5 @@ for i in range(len(possible_a)):
 cands = np.column_stack([Times, Bins, DMs, SNRs])
 titles = np.array(['Times', 'Bins', 'DMs', 'SNRs'])
 cands = np.row_stack([titles, cands]).astype(str)
-'''
-print(time.time()-start)
-#np.savetxt(filename[:-3]+'txt', cands, fmt='%s')
+
+np.savetxt(filename[:-3]+'txt', cands, fmt='%s')

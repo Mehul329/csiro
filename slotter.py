@@ -3,11 +3,14 @@ import numpy as np
 
 
 #%%
-filename = '2018-06-27-04:14:17.txt'
-cands = np.loadtxt(filename)
-#cls_obj = cluster.AgglomerativeClustering(n_clusters=None, compute_full_tree=True, distance_threshold=10)
-#clusters = cls_obj.fit(np.column_stack([Times, Bins, DMs])).labels_
-#cands = [[]]*(max(clusters)+2)
+filename = '2018-06-27-04_14_17.txt'
+cands = np.loadtxt(filename, dtype='str')
+cands = cands[1:,:].astype(float)
+cls_obj = cluster.AgglomerativeClustering(n_clusters=None, compute_full_tree=True, distance_threshold=10)
+clusters = cls_obj.fit(cands[:,:2]).labels_
+groups = [[]] * (max(clusters)+1)
+for i in range(max(clusters)+1):
+    groups[clusters[i]].append(cands[i][0])
 
 
 #%%
