@@ -1,9 +1,13 @@
 from sklearn import cluster
+import numpy as np
+
 
 #%%
-cls_obj = cluster.AgglomerativeClustering(n_clusters=None, compute_full_tree=True, distance_threshold=10)
-clusters = cls_obj.fit(np.column_stack([Times, Bins, DMs])).labels_
-cands = [[]]*(max(clusters)+2)
+filename = '2018-06-27-04:14:17.txt'
+cands = np.loadtxt(filename)
+#cls_obj = cluster.AgglomerativeClustering(n_clusters=None, compute_full_tree=True, distance_threshold=10)
+#clusters = cls_obj.fit(np.column_stack([Times, Bins, DMs])).labels_
+#cands = [[]]*(max(clusters)+2)
 
 
 #%%
