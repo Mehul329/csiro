@@ -5,9 +5,9 @@ import matplotlib.pyplot as plt
 
 #%% Input
 a = argparse.ArgumentParser()
-a.add_argument('-f', type = str, help = 'Type the filename', default = '2018-07-02-03:55:09.fil')
+a.add_argument('-f', type = str, help = 'Type the filename', default = '2018-06-27-04:14:17.fil')
 a.add_argument('-k', type = int, nargs = 3, help = 'Bins list: Start, End, Steps', default = [1,10,1])
-a.add_argument('-dm', type = int, nargs = 3, help = 'DM list: Start, End, Steps', default = [10,100,10])
+a.add_argument('-dm', type = int, nargs = 3, help = 'DM list: Start, End, Steps', default = [40,50,1])
 a.add_argument('-fl_j', '--flattening_jump', type=int, help="Jump size to use when flattening the time series (def = 100", default=100)
 a.add_argument("-t", '--threshold', type=float, help='S/N threshold for selecting candidates (def = 8)', default=8)
 
@@ -76,9 +76,11 @@ for i in range(len(possible_a)):
         print("Kernel is: ", kernel)
 
         mvaverage_arr = np.convolve(flattened_sum, np.ones(kernel), mode='valid') / kernel
-        mvaverage_arr /= rms * np.sqrt(kernel)
-        plt.plot(mvaverage_arr)
-        plt.show()
+        mvaverage_arr /= (np.std(mvaverage_arr))
+        #mvaverage_arr /= (np.std(mvaverage_arr) * np.sqrt(kernel))
+        #mvaverage_arr /= (rms * np.sqrt(kernel))
+        #plt.plot(mvaverage_arr)
+        #plt.show()
         peak_locs = mvaverage_arr > threshold
         snr = mvaverage_arr[peak_locs]
         
@@ -87,6 +89,10 @@ for i in range(len(possible_a)):
         DMs.extend(list(dm[i] * np.ones_like(snr)))
         Times.extend( list(np.arange(len(mvaverage_arr))[peak_locs]))
 
+fig = plt.figure()
+ax = plt.axes(projection ='3d')
+ax.plot3D(Bins, DMs, Times, '.')
+plt.show()
 
 #%%
 #this function will group the neighbouring points (used on first_seen_time)
