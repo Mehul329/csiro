@@ -1,18 +1,22 @@
 from sklearn import cluster
 import numpy as np
+import matplotlib.pyplot as plt
 
 
 #%%
 filename = '2018-06-27-04_14_17.txt'
 cands = np.loadtxt(filename, dtype='str')
 cands = cands[1:,:].astype(float)
-cls_obj = cluster.AgglomerativeClustering(n_clusters=None, compute_full_tree=True, distance_threshold=10)
-clusters = cls_obj.fit(cands[:,:2]).labels_
-groups = [[]] * (max(clusters)+1)
-for i in range(max(clusters)+1):
-    groups[clusters[i]].append(cands[i][0])
+cls_obj = cluster.AgglomerativeClustering(n_clusters=None, compute_full_tree=True, distance_threshold=1000)
+clusters = cls_obj.fit(cands[:,:3]).labels_
+cands = np.column_stack([cands, clusters])
 
 
+fig = plt.figure()
+ax = plt.axes(projection='3d')
+for cand in cands:
+    ax.scatter(cand[0], cand[1], cand[2])
+plt.show()
 #%%
 #this function will group the neighbouring points (used on first_seen_time)
 '''
