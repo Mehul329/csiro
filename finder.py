@@ -1,7 +1,6 @@
 import numpy as np
 from sigpyproc.readers import FilReader as F
 import argparse
-import matplotlib.pyplot as plt
 
 
 #%% Input
@@ -105,8 +104,6 @@ for i in range(len(possible_a)):
 
         mvaverage_arr = np.convolve(flattened_sum, np.ones(kernel), mode='valid')
         mvaverage_arr /= (rms * np.sqrt(kernel))
-        plt.plot(mvaverage_arr)
-        plt.show()
         peak_locs = mvaverage_arr > threshold
         snr = mvaverage_arr[peak_locs]
 
@@ -119,4 +116,7 @@ cands = np.column_stack([Times, Bins, DMs, SNRs])
 titles = np.array(['Times', 'Bins', 'DMs', 'SNRs'])
 cands = np.row_stack([titles, cands]).astype(str)
 outname = filename.split('/')[-2:]
-np.savetxt(outname.replace('/','_')[:-3]+'txt', cands, fmt='%s')
+outname = "_".join(outname)
+outname = outname.replace('/','_')[:-3]+'txt'
+print('this is the final name = ', outname)
+np.savetxt(outname, cands, fmt='%s')
