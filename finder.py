@@ -7,9 +7,9 @@ import matplotlib.pyplot as plt
 #%% Input
 a = argparse.ArgumentParser()
 a.add_argument('-f', type = str, help = 'Type the filename', default = '2018-06-27-04_14_17.fil')
-a.add_argument('-t_x', type = int, help = 'Give the value for scrunching', default = 2)
-a.add_argument('-k', type = int, nargs = 3, help = 'Bins list: Start, Factor, End', default = [2,1.1,5])
-a.add_argument('-dm', type = int, nargs = 3, help = 'DM list: Start, End, Steps', default = [1,46,1])
+a.add_argument('-t_x', type = int, help = 'Give the value for scrunching', default = 20)
+a.add_argument('-k', type = int, nargs = 3, help = 'Bins list: Start, Factor, End', default = [1,1.25,10])
+a.add_argument('-dm', type = int, nargs = 3, help = 'DM list: Start, End, Steps', default = [1,50,2])
 a.add_argument('-fl_j', '--flattening_jump', type=int, help="Jump size to use when flattening the time series (def = 100", default=100)
 a.add_argument("-t", '--threshold', type=float, help='S/N threshold for selecting candidates (def = 8)', default=12)
 
@@ -119,4 +119,4 @@ cands = np.column_stack([Times, Bins, DMs, SNRs])
 titles = np.array(['Times', 'Bins', 'DMs', 'SNRs'])
 cands = np.row_stack([titles, cands]).astype(str)
 
-np.savetxt(filename[:-3]+'txt', cands, fmt='%s')
+np.savetxt(filename.replace('/','_')[:-3]+'txt', cands, fmt='%s')
