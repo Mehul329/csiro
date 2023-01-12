@@ -7,12 +7,13 @@ import argparse
 
 #%% Input
 a = argparse.ArgumentParser()
-a.add_argument('-f', type = str, help = 'Type the filename')
+a.add_argument('-f', type = str, help = 'Type the filename', default = '2018-06-27-04_14_17')
 args = a.parse_args()
 filename = args.f
 
 #%%
-candidates = np.load(filename)
+candidates = np.loadtxt(filename+'.txt',dtype=str)
+candidates = candidates[1:]
 
 def plotter(matrix, dm, imp_start, bins, area):
   
@@ -51,13 +52,13 @@ def plotter(matrix, dm, imp_start, bins, area):
         
     return out, sum_
 
-new_dir = pathlib.Path('/u/aga017/Desktop/', filename) #disable this on your machine or change accordingly
-new_dir.mkdir(parents=True, exist_ok=True) #disable this on your machine or change accordingly
+#new_dir = pathlib.Path('/u/aga017/Desktop/', filename) #disable this on your machine or change accordingly
+#new_dir.mkdir(parents=True, exist_ok=True) #disable this on your machine or change accordingly
 for i in range(1, len(candidates)):
-    dm = int(float(candidates[i,3]))
+    dm = int(float(candidates[i,2]))
     imp_start = int(float(candidates[i,0]))
-    SNR = round(float(candidates[i,1]),2)
-    bins = int(float(candidates[i,2]))
+    SNR = round(float(candidates[i,3]),2)
+    bins = int(float(candidates[i,1]))
     out, sum_ = plotter(filename+'.fil', dm, imp_start, bins, 500)
     temp = np.where(sum_ > (7*np.std(sum_) + np.mean(sum_)))
     #check = len(temp[0]) #enable this if you want to look at sharp spikes only
@@ -71,7 +72,8 @@ for i in range(1, len(candidates)):
         ax0.imshow(out, aspect = 'auto', interpolation = 'None')
         ax0.axes.get_xaxis().set_visible(False)
         ax1.plot(sum_, 'r-')
-        fig.savefig(new_dir / str(i), format = 'png', dpi = 300) #disable this on your machine or change accordingly
+        plt.show()
+        #fig.savefig(new_dir / str(i), format = 'png', dpi = 300) #disable this on your machine or change accordingly
         plt.show()
     
             
