@@ -7,8 +7,8 @@ import argparse
 a = argparse.ArgumentParser()
 a.add_argument('-f', type = str, help = 'Type the filename', default = '2018-06-27-04_14_17.fil')
 a.add_argument('-t_x', type = int, help = 'Give the value for scrunching', default = 20)
-a.add_argument('-k', type = int, nargs = 3, help = 'Bins list: Start, Factor, End', default = [1,1.25,10])
-a.add_argument('-dm', type = int, nargs = 3, help = 'DM list: Start, End, Steps', default = [1,50,2])
+a.add_argument('-k', type = int, nargs = 3, help = 'Bins list: Start, Factor, End', default = [1,1.25,800])
+a.add_argument('-dm', type = int, nargs = 3, help = 'DM list: Start, End, Steps', default = [1,90,2])
 a.add_argument('-fl_j', '--flattening_jump', type=int, help="Jump size to use when flattening the time series (def = 100", default=100)
 a.add_argument("-t", '--threshold', type=float, help='S/N threshold for selecting candidates (def = 8)', default=8)
 
@@ -81,7 +81,7 @@ new_data = np.empty([n_chans,nsamps])
 threshold = args.threshold
     
 for i in range(len(possible_a)):
-    print("DM is : ", dm[i])
+    #print("DM is : ", dm[i])
     new_data[0] = data[0]
     for j in range(1, n_chans):
         freq = possible_freq[j]
@@ -100,7 +100,7 @@ for i in range(len(possible_a)):
     rms = flattened_sum.std()
 
     for kernel in kernel_lst:
-        print("Kernel is: ", kernel)
+        #print("Kernel is: ", kernel)
 
         mvaverage_arr = np.convolve(flattened_sum, np.ones(kernel), mode='valid')
         mvaverage_arr /= (rms * np.sqrt(kernel))
@@ -115,8 +115,13 @@ for i in range(len(possible_a)):
 cands = np.column_stack([Times, Bins, DMs, SNRs])
 titles = np.array(['Times', 'Bins', 'DMs', 'SNRs'])
 cands = np.row_stack([titles, cands]).astype(str)
-outname = filename.split('/')[-2:]
-outname = "_".join(outname)
-outname = outname.replace('/','_')[:-3]+'txt'
-print('this is the final name = ', outname)
+
+outdir = "/scratch1/aga017/output/"
+infile = filename.strip().split("/")
+outname = outdir + infile[-5] + "_" + infile[-2] + "_" + infile[-1][:-3] + "txt"
+
+#outname = filename.split('/')[-2:]
+#outname = "_".join(outname)
+#outname = outname.replace('/','_')[:-3]+'txt'
+#print('this is the final name = ', outname)
 np.savetxt(outname, cands, fmt='%s')
