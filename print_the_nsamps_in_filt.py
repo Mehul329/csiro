@@ -3,7 +3,8 @@ import argparse, os
 
 def main(args):
     outdir = "/scratch1/aga017/output/"
-    infile = args.f.strip().split("/")
+    infile = args.f
+    infile = infile.strip().split("/")
     outname = outdir + infile[-5] + "_" + infile[-2] + "_" + infile[-1][:-3] + "cand"
     f = F(args.f)
     nsamps = f.header.nsamples

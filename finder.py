@@ -28,6 +28,8 @@ t_x = args.t_x
 
 #%%
 data = F(filename)
+print(f"Finder is now processing {filename}")
+
 '''
 def t_scrunch(data, t_x):
     tot_nsamps = data.header.nsamples
@@ -123,5 +125,5 @@ outname = outdir + infile[-5] + "_" + infile[-2] + "_" + infile[-1][:-3] + "txt"
 #outname = filename.split('/')[-2:]
 #outname = "_".join(outname)
 #outname = outname.replace('/','_')[:-3]+'txt'
-#print('this is the final name = ', outname)
+print('Writing candidates to ', outname, '\n')
 np.savetxt(outname, cands, fmt='%s')
