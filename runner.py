@@ -3,16 +3,15 @@ import argparse
 import numpy as np
 #%% Input
 
-#a = argparse.ArgumentParser()
-#a.add_argument('-n', type = int, help = 'Type the node number (1-32)')
-#a.add_argument('-c', type = str, help = 'Type path of finder code')
-#args = a.parse_args()
-#node = args.n
-#code = args.c
+a = argparse.ArgumentParser()
+a.add_argument('-n', type = int, help = 'Type the node number (1-32)')
+a.add_argument('-t', type = str, help = 'Type the full path of tape directory')
+args = a.parse_args()
+node = args.n
+tape = args.t
 code = 'finder.py'
-node = 1
 
-basedir = '/Users/mehulagarwal/Desktop/Tape1/'
+basedir = tape
 observations = os.listdir(basedir)
 observations = observations[1:]
 obs_dir = np.core.defchararray.add(basedir, observations)
@@ -27,8 +26,9 @@ filter_bank_path = np.core.defchararray.add(func(beam_dir), '.fil')
 for filter_bank in filter_bank_path:
     if os.path.exists("filter_bank"):
         cmd = f"python3 {code} -f "+filter_bank
-        os.system(cmd)
-        print(f"Done : {np.array(cmd.split('/'))[np.array([-5,-4,-2])]}")
+        #os.system(cmd)
+        print(cmd)
+	#print(f"Done : {np.array(cmd.split('/'))[np.array([-5,-4,-2])]}")
     else:
         print(f"{filter_bank} does not exist")
 
