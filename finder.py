@@ -119,11 +119,8 @@ titles = np.array(['Times', 'Bins', 'DMs', 'SNRs'])
 cands = np.row_stack([titles, cands]).astype(str)
 
 outdir = "/scratch1/aga017/output/"
-infile = filename.strip().split("/")
-outname = outdir + infile[-5] + "_" + infile[-2] + "_" + infile[-1][:-3] + "txt"
+infile = filename.split('/')[-5:]
+outname = outdir+infile[0]+'_'+infile[1]+'_'+infile[3]+'.txt'
 
-#outname = filename.split('/')[-2:]
-#outname = "_".join(outname)
-#outname = outname.replace('/','_')[:-3]+'txt'
 print('Writing candidates to ', outname, '\n')
 np.savetxt(outname, cands, fmt='%s')
