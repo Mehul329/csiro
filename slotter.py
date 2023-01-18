@@ -1,22 +1,21 @@
-from sklearn import cluster
-import numpy as np
 import matplotlib.pyplot as plt
-
-
+from sklearn.cluster import DBSCAN
+import numpy as np
 #%%
-filename = '2018-06-27-04_14_17.txt'
+filename = '/Users/mehulagarwal/Downloads/1.txt'
 cands = np.loadtxt(filename, dtype='str')
 cands = cands[1:,:].astype(float)
-cls_obj = cluster.AgglomerativeClustering(n_clusters=None, compute_full_tree=True, distance_threshold=1000)
+cls_obj = DBSCAN(eps=1000, min_samples=1)
 clusters = cls_obj.fit(cands[:,:3]).labels_
-cands = np.column_stack([cands, clusters])
+#cands = np.column_stack([cands, clusters])
 
-
+'''
 fig = plt.figure()
 ax = plt.axes(projection='3d')
 for cand in cands:
     ax.scatter(cand[0], cand[1], cand[2])
 plt.show()
+'''
 #%%
 #this function will group the neighbouring points (used on first_seen_time)
 '''
