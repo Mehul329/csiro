@@ -4,7 +4,7 @@ import numpy as np
 #%% Input
 
 a = argparse.ArgumentParser()
-a.add_argument('-n', type = int, help = 'Type the node number (1-32)')
+a.add_argument('-n', type = int, help = 'Type the node number (1-44)')
 a.add_argument('-t', type = str, help = 'Type the full path of tape directory')
 args = a.parse_args()
 node = args.n
@@ -17,7 +17,7 @@ observations = observations[1:]
 obs_dir = np.core.defchararray.add(basedir, observations)
 func = np.vectorize(lambda x:x+x.split('/')[-4])
 
-beam_blocks = (np.linspace(1,11,11)+(node-1)*11).astype(int)
+beam_blocks = (np.linspace(1,8,8)+(node-1)*8).astype(int)
 beam_blocks = np.core.defchararray.zfill(beam_blocks.astype(str), 3)
 beam_blocks = np.core.defchararray.add('/FB/BEAM_', beam_blocks)
 beam_blocks = np.core.defchararray.add(beam_blocks, '/')
