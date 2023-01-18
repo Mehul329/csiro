@@ -121,6 +121,9 @@ cands = np.row_stack([titles, cands]).astype(str)
 outdir = "/scratch1/aga017/output/"
 infile = filename.split('/')[-5:]
 outname = outdir+infile[0]+'_'+infile[1]+'_'+infile[3]+'.txt'
-
+sentence = f"The data is being sruched by a factor of {t_x}. DM search is linear from {dm_start} to {dm_end} with a spacing of {dm_space}. Boxcarring is geometric from {k_start} to {k_end} with a factor of {k_factor}. The threshold is {threshold} and the curve of best fit is being derived by jumping to every {args.flattening_jump} point in the scrunched data"
 print('Writing candidates to ', outname, '\n')
-np.savetxt(outname, cands, fmt='%s')
+
+with open(outname, "w") as file:
+    file.write(sentence + "\n")
+    np.savetxt(file, cands, fmt = '%s')
