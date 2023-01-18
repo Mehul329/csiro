@@ -9,7 +9,7 @@ a.add_argument('-t', type = str, help = 'Type the full path of tape directory')
 args = a.parse_args()
 node = args.n
 tape = args.t
-code = 'finder.py'
+code = '/home/aga017/codes/csiro/finder.py'
 
 basedir = tape
 observations = os.listdir(basedir)
@@ -26,7 +26,7 @@ filter_bank_path = np.core.defchararray.add(func(beam_dir), '.fil')
 for filter_bank in filter_bank_path:
     if os.path.exists(filter_bank):
         cmd = f"python3 {code} -f "+filter_bank
-        #os.system(cmd)
+        os.system(cmd)
         print(cmd)
 	#print(f"Done : {np.array(cmd.split('/'))[np.array([-5,-4,-2])]}")
     else:
