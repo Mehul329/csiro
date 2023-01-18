@@ -3,19 +3,25 @@ from sklearn.cluster import DBSCAN
 import numpy as np
 #%%
 filename = '/Users/mehulagarwal/Downloads/1.txt'
+print(1)
 cands = np.loadtxt(filename, dtype='str')
+print(2)
 cands = cands[1:,:].astype(float)
+print(3)
 cls_obj = DBSCAN(eps=1000, min_samples=1)
+print(4)
 clusters = cls_obj.fit(cands[:,:3]).labels_
 #cands = np.column_stack([cands, clusters])
 
-'''
+
 fig = plt.figure()
 ax = plt.axes(projection='3d')
+print(5)
 for cand in cands:
     ax.scatter(cand[0], cand[1], cand[2])
+print(6)
 plt.show()
-'''
+
 #%%
 #this function will group the neighbouring points (used on first_seen_time)
 '''

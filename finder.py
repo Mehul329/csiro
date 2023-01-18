@@ -90,8 +90,9 @@ for i in range(len(possible_a)):
         new_start = int((possible_a[i]/(freq))**2 - possible_b[i])
         new_data[j] = np.roll(data[j], -new_start)
         #if (840 <= freq <= 844.5) or (835.5 <= freq <= 840) or (830 <= freq <= 835) or 
-        #(825.25 <= freq <= 829.75): 
-        #    new_data[j] = np.zeros_like(new_data[j])
+        #(825.25 <= freq <= 829.75):
+	if (840 <= freq <= 844.5): 
+            new_data[j] = np.zeros_like(new_data[j])
         #new data is  now transformed data based on the curve
 
     #following calculates the sum of each column
