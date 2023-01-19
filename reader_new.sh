@@ -1,6 +1,6 @@
 #!/bin/bash
 
-define the tape device path
+#define the tape device path
 tape_device="/dev/tape/nst5"
 
 #move to the beginning of the tape
