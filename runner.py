@@ -5,7 +5,7 @@ import numpy as np
 
 a = argparse.ArgumentParser()
 a.add_argument('-n', type = int, help = 'Type the node number (1-44)')
-a.add_argument('-t', type = str, help = 'Type the full path of tape directory')
+a.add_argument('-t', type = str, help = 'Type the full path of tape directory with / at the end')
 args = a.parse_args()
 node = args.n
 tape = args.t

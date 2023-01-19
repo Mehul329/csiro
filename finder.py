@@ -91,7 +91,7 @@ for i in range(len(possible_a)):
         new_data[j] = np.roll(data[j], -new_start)
         #if (840 <= freq <= 844.5) or (835.5 <= freq <= 840) or (830 <= freq <= 835) or 
         #(825.25 <= freq <= 829.75):
-	if (840 <= freq <= 844.5): 
+        if (840 <= freq <= 844.5): 
             new_data[j] = np.zeros_like(new_data[j])
         #new data is  now transformed data based on the curve
 
@@ -119,7 +119,7 @@ cands = np.column_stack([Times, Bins, DMs, SNRs])
 titles = np.array(['Times', 'Bins', 'DMs', 'SNRs'])
 cands = np.row_stack([titles, cands]).astype(str)
 
-outdir = "/scratch1/aga017/output/"
+outdir = "/scratch2/aga017/output/"
 infile = filename.split('/')[-5:]
 outname = outdir+infile[0]+'_'+infile[1]+'_'+infile[3]+'.txt'
 sentence = f"#The data is being sruched by a factor of {t_x}. DM search is linear from {dm_start} to {dm_end} with a spacing of {dm_space}. Boxcarring is geometric from {k_start} to {int(k_end)} with a factor of {k_factor}. The threshold is {threshold} and the curve of best fit is being derived by jumping to every {args.flattening_jump} point in the scrunched data"
