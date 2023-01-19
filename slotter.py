@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 from sklearn.cluster import DBSCAN
 import numpy as np
+
 #%%
 filename = '/Users/mehulagarwal/Downloads/1.txt'
 print(1)
@@ -8,19 +9,34 @@ cands = np.loadtxt(filename, dtype='str')
 print(2)
 cands = cands[1:,:].astype(float)
 print(3)
-cls_obj = DBSCAN(eps=1000, min_samples=1)
+#cls_obj = DBSCAN(eps=50, min_samples=1)
 print(4)
-clusters = cls_obj.fit(cands[:,:3]).labels_
+#clusters = cls_obj.fit(cands[:,:3]).labels_
 #cands = np.column_stack([cands, clusters])
-
-
+#%%
+dy = Y
+dx = X
+dz = Z
+R = 1.25 * Y
+sx = Y/X
+sz = Y/Z
+cands[]
+fig = plt.figure()
+ax = fig.add_subplot(111, projection='3d')
+ax.scatter(cands[:,1], cands[:,0], cands[:,2], '.')#, c=clusters)
+ax.set_xlim([12800,13000])
+ax.set_ylim([110450,110500])
+ax.set_zlim([1000,1100])
+plt.show()
+'''
 fig = plt.figure()
 ax = plt.axes(projection='3d')
 print(5)
-for cand in cands:
-    ax.scatter(cand[0], cand[1], cand[2])
+for i in range(len(clusters)):
+    ax.scatter(cand[0], cand[1], cand[2], colors[i])
 print(6)
 plt.show()
+'''
 
 #%%
 #this function will group the neighbouring points (used on first_seen_time)
