@@ -31,7 +31,7 @@ for filter_bank in filter_bank_path:
     if os.path.exists(filter_bank):
         start = time.time()
         cmd = f"python3 {code} -f "+filter_bank
-        os.system(cmd)
+        #os.system(cmd)
         end = time.time()
         print(end-start, cmd)
     else:
