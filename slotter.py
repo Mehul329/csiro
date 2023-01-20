@@ -3,7 +3,7 @@ from sklearn.cluster import DBSCAN
 import numpy as np
 
 #%%
-filename = '/Users/mehulagarwal/Downloads/1.txt'
+filename = '/u/aga017/Desktop/SM0005L6_2018-02-23-17:56:51_BEAM_004.txt'
 cands = np.loadtxt(filename, dtype='str')
 cands = cands[1:,:].astype(float)
 
@@ -78,7 +78,7 @@ print(max(clusters))
 '''
 def groupBlocks(samp_list, bin_list):
     res = [[0]]
-  
+
     for i in range(1, len(samp_list)):
         if samp_list[i] in range(int(samp_list[i-1]),int(samp_list[i-1]+bin_list[i-1])):
             res[-1].append(i)
@@ -86,7 +86,7 @@ def groupBlocks(samp_list, bin_list):
             res.append([i])
     return res
 
-a = groupBlocks(Times, Bins) 
+a = groupBlocks(Times, Bins)
 
 #this loop will extract the point that has the maximum S/R among the neighbouring points
 for i in range(len(a)):
@@ -111,11 +111,11 @@ cands = cands[cands[:,3].argsort()] #sorting it with respect to DMs
 #this function will group the neighbouring duplicates (used on DMs)
 def groupDuplicates(lst):
     res = [[0]]
-  
+
     for i in range(1, len(lst)):
         if lst[i-1] == lst[i]:
             res[-1].append(i)
-  
+
         else:
             res.append([i])
     return res
