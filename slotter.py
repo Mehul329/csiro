@@ -25,7 +25,8 @@ fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
 for icluster in uniq_clusters:
     cand = cands[icluster == clusters]
-    print(cand)
+    idx = np.where(cand[:3]==max(cand[:3]))
+    print(idx, cand[idx])
     #plt.plot(cand[:,0]/20, cand[:,3], '.')
     ax.scatter(cand[:,0]/20, 20*cand[:,1]/400, 20*cand[:,2]/40, '.')
 plt.show()
