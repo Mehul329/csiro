@@ -16,7 +16,7 @@ basedir = tape
 observations = os.listdir(basedir)
 observations = observations[1:]
 obs_dir = np.core.defchararray.add(basedir, observations)
-obs_dir = obs_dir[0:5]
+#obs_dir = obs_dir[0:5]
 func = np.vectorize(lambda x:x+x.split('/')[-4])
 
 beam_blocks = (np.linspace(1,8,8)+(node-1)*8).astype(int)
