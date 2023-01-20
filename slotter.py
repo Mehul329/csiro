@@ -21,9 +21,12 @@ cls_obj = DBSCAN(eps=1.1, min_samples=1)
 clusters = cls_obj.fit(np.column_stack([time, SNR/max(SNR)])).labels_
 uniq_clusters = np.unique(clusters)
 nclusters = len(uniq_clusters)
+fig = plt.figure()
+ax = fig.add_subplot(111, projection='3d')
 for icluster in uniq_clusters:
     cand = cands[icluster == clusters]
-    plt.plot(cand[:,0]/20, cand[:,3], '.')
+    #plt.plot(cand[:,0]/20, cand[:,3], '.')
+    ax.scatter(cand[:,0]/20, 20*cand[:,1]/400, 20*cand[:,2]/40, '.')
 plt.show()
 print(max(clusters))
 

@@ -6,13 +6,14 @@ import pathlib
 import argparse
 
 #%% Input
-a = argparse.ArgumentParser()
-a.add_argument('-f', type = str, help = 'Type the filename', default = '2018-06-27-04_14_17')
-args = a.parse_args()
-filename = args.f
+#a = argparse.ArgumentParser()
+#a.add_argument('-f', type = str, help = 'Type the filename', default = '/u/aga017/Desktop/SM0005L6_2018-02-23-17:56:51_BEAM_004.txt')
+#args = a.parse_args()
+#filename = args.f
 
 #%%
-candidates = np.loadtxt(filename+'.txt',dtype=str)
+#candidates = np.loadtxt(filename+'.txt',dtype=str)
+candidates = np.loadtxt('/u/aga017/Desktop/SM0005L6_2018-02-23-17:56:51_BEAM_004.txt')
 candidates = candidates[1:]
 
 def plotter(matrix, dm, imp_start, bins, area):
@@ -59,7 +60,7 @@ for i in range(1, len(candidates)):
     imp_start = int(float(candidates[i,0]))
     SNR = round(float(candidates[i,3]),2)
     bins = int(float(candidates[i,1]))
-    out, sum_ = plotter(filename+'.fil', dm, imp_start, bins, 500)
+    out, sum_ = plotter('/u/aga017/Desktop/2018-02-23-17:56:51.fil', dm, imp_start, bins, 500)
     temp = np.where(sum_ > (7*np.std(sum_) + np.mean(sum_)))
     #check = len(temp[0]) #enable this if you want to look at sharp spikes only
     check = 1
