@@ -2,7 +2,7 @@
 #
 #SBATCH --job-name=find_ulps_in_smirf
 #SBATCH --ntasks=1
-#SBATCH --time=15:30:00
+#SBATCH --time=07:30:00
 #SBATCH --mem-per-cpu=10GB
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=aga017@csiro.au
