@@ -19,19 +19,31 @@ time = cands[:,0]/20
 boxcar = 20*cands[:,1]/400
 DM = 20*cands[:,2]/40
 SNR = cands[:,3]
-#based on SNR and time
-#plt.plot(time, SNR, '.')
 
-cls_obj = DBSCAN(eps=2, min_samples=1)
+#based on SNR and time
+cls_obj = DBSCAN(eps=1, min_samples=1)
 clusters = cls_obj.fit(np.column_stack([time, SNR/max(SNR)])).labels_
 uniq_clusters = np.unique(clusters)
 nclusters = len(uniq_clusters)
 for icluster in uniq_clusters:
     cand = cands[icluster == clusters]
     plt.plot(cand[:,0]/20, cand[:,3], '.')
-    #plt.plot(cands_in_this_cluster[:,0]/20, cands_in_this_cluster[:,2]/2,'.')
 plt.show()
-    
+
+#based on DM and time
+#plt.plot(cands[:,0], cands[:,2], '.')
+#plt.show()
+'''
+cls_obj = DBSCAN(eps=1, min_samples=1)
+clusters = cls_obj.fit(np.column_stack([time, DM])).labels_
+uniq_clusters = np.unique(clusters)
+nclusters = len(uniq_clusters)
+for icluster in uniq_clusters:
+    cand = cands[icluster == clusters]
+    plt.plot(cand[:,0]/20, 20*cand[:,2]/40, '.')
+plt.show()
+print(max(clusters))
+'''
 #plt.scatter(time, SNR, c=clusters, cmap='rainbow')
 #plt.show()
 '''
