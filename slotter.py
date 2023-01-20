@@ -3,8 +3,15 @@ from sklearn.cluster import DBSCAN
 import numpy as np
 
 #%%
-filename = '/u/aga017/Desktop/SM0005L6_2018-02-23-17:56:51_BEAM_004.txt'
-cands = np.loadtxt(filename, dtype='str')
+
+file1= '/u/aga017/Desktop/SM0005L6_2018-02-23-17:56:51_BEAM_004.txt'
+file2 = '/Users/mehulagarwal/Downloads/SM0005L6_2018-02-23-17_56_51_BEAM_004.txt'
+
+try:
+    cands = np.loadtxt(file1, dtype='str')
+except:
+    cands = np.loadtxt(file2, dtype='str')
+header = cands[0,:].astype(str)    
 cands = cands[1:,:].astype(float)
 
 time = cands[:,0]/20
@@ -17,21 +24,25 @@ cls_obj = DBSCAN(eps=1.1, min_samples=1)
 #to check the scaling
 #plt.plot(cands[:,0], cands[:,3], '.')
 #plt.show()
-
 clusters = cls_obj.fit(np.column_stack([time, SNR/max(SNR)])).labels_
 uniq_clusters = np.unique(clusters)
 nclusters = len(uniq_clusters)
+#%%
 fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
+final_cands = []
+final_cands.append(header)
 for icluster in uniq_clusters:
     cand = cands[icluster == clusters]
-    idx = np.where(cand[:3]==np.max(cand[:3]))
-    print(idx, idx[0][0])#, cand[idx])
-    #plt.plot(cand[:,0]/20, cand[:,3], '.')
-    ax.scatter(cand[:,0]/20, 20*cand[:,1]/400, 20*cand[:,2]/40, '.')
+    final_cand = cand[np.where(cand[:,3]==np.max(cand[:,3]))][0]
+    final_cands.append(final_cand)
+    #plt.plot(cand[:,0], cand[:,3], '.')
+    ax.scatter(final_cand[0], final_cand[1], final_cand[2], '.')
 plt.show()
-print(max(clusters))
-
+final_cands = np.array(final_cands)
+print(final_cands)
+print(len(final_cands))
+np.savetxt('/Users/mehulagarwal/Downloads/final.txt', final_cands, fmt='%s')
 
 '''
 #based on DM and time
