@@ -5,7 +5,7 @@ import numpy as np
 #%%
 
 file1= '/u/aga017/Desktop/SM0005L6_2018-02-23-17:56:51_BEAM_004.txt'
-file2 = '/Users/mehulagarwal/Downloads/SM0005L6_2018-02-23-17_56_51_BEAM_004.txt'
+file2 = '/Users/mehulagarwal/Downloads/8L6_Beam4.txt'
 
 try:
     cands = np.loadtxt(file1, dtype='str')
@@ -28,6 +28,7 @@ clusters = cls_obj.fit(np.column_stack([time, SNR/max(SNR)])).labels_
 uniq_clusters = np.unique(clusters)
 nclusters = len(uniq_clusters)
 #%%
+
 fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
 final_cands = []
@@ -82,11 +83,17 @@ uniq_clusters = np.unique(clusters)
 nclusters = len(uniq_clusters)
 fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
+final_cands = []
+final_cands.append(header)
 for icluster in uniq_clusters:
     cand = cands[icluster == clusters]
+    final_cand = cand[np.where(cand[:,3]==np.max(cand[:,3]))][0]
+    final_cands.append(final_cand)
     ax.scatter(cand[:,0]/20, 20*cand[:,1]/400, 20*cand[:,2]/40, '.')
 plt.show()
+final_cands = np.array(final_cands)
 print(max(clusters))
+np.savetxt('/Users/mehulagarwal/Downloads/final3d.txt', final_cands, fmt='%s')
 '''
 
 #%%
