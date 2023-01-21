@@ -13,7 +13,10 @@ import argparse
 
 #%%
 #candidates = np.loadtxt(filename+'.txt',dtype=str)
-candidates = np.loadtxt('/Users/mehulagarwal/Downloads/final.txt', dtype = str)
+try:
+    candidates = np.loadtxt('/u/aga017/Desktop/final.txt', dtype = str)
+except:
+    candidates = np.loadtxt('/Users/mehulagarwal/Downloads/final.txt', dtype = str)
 candidates = candidates[1:]
 
 def plotter(matrix, dm, imp_start, bins, area):
@@ -37,9 +40,8 @@ def plotter(matrix, dm, imp_start, bins, area):
         imp = int((a/(freq[j]))**2 - b) + imp_start
         
         area_start = imp - area
-        start_range = matrix[j][np.linspace(area_start, imp + bins - 1, imp + bins - area_start).astype(int)]
-       
-        
+        start_range = matrix[j][(np.linspace(area_start, imp + bins - 1, imp + bins - area_start) % nsamps).astype(int)]
+
         area_end = imp + bins + area
         end_range = matrix[j][(np.linspace(imp + bins, area_end - 1, area_end - (imp + bins)) % nsamps).astype(int)]
 
@@ -60,7 +62,10 @@ for i in range(1, len(candidates)):
     imp_start = int(float(candidates[i,0]))
     SNR = round(float(candidates[i,3]),2)
     bins = int(float(candidates[i,1]))
-    out, sum_ = plotter('/Users/mehulagarwal/Downloads/2018-07-08-02 58 17.fil', dm, imp_start, bins, 500)
+    try:
+        out, sum_ = plotter('/u/aga017/Desktop/2018-02-23-17:56:51.fil', dm, imp_start, bins, bins*10)
+    except:
+        out, sum_ = plotter('/Users/mehulagarwal/Downloads/2018-07-08-02 58 17.fil', dm, imp_start, bins, bins*100)
     temp = np.where(sum_ > (7*np.std(sum_) + np.mean(sum_)))
     #check = len(temp[0]) #enable this if you want to look at sharp spikes only
     check = 1
