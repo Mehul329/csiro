@@ -14,7 +14,7 @@ import argparse
 #%%
 #candidates = np.loadtxt(filename+'.txt',dtype=str)
 try:
-    candidates = np.loadtxt('/u/aga017/Desktop/final.txt', dtype = str)
+    candidates = np.loadtxt('/u/aga017/Desktop/final3d.txt', dtype = str)
 except:
     candidates = np.loadtxt('/Users/mehulagarwal/Downloads/final.txt', dtype = str)
 candidates = candidates[1:]
@@ -63,13 +63,16 @@ for i in range(1, len(candidates)):
     SNR = round(float(candidates[i,3]),2)
     bins = int(float(candidates[i,1]))
     try:
-        out, sum_ = plotter('/u/aga017/Desktop/2018-02-23-17:56:51.fil', dm, imp_start, bins, bins*10)
+        out, sum_ = plotter('/u/aga017/Desktop/2018-03-21-13:51:10.fil', dm, imp_start, bins, bins*20)
     except:
         out, sum_ = plotter('/Users/mehulagarwal/Downloads/2018-07-08-02 58 17.fil', dm, imp_start, bins, bins*100)
-    temp = np.where(sum_ > (7*np.std(sum_) + np.mean(sum_)))
-    #check = len(temp[0]) #enable this if you want to look at sharp spikes only
-    check = 1
-    if check == 1:
+    temp = np.where(sum_ > (3*np.std(sum_) + np.mean(sum_)))
+    check1 = len(temp[0]) #enable this if you want to look at sharp spikes only
+    check = 0
+    if np.std(sum_)<2*SNR:
+        check=1
+    #check = 1
+    if (check+check1 == 2):
         fig = plt.figure()
         ax0 = plt.subplot2grid(shape = (3, 1), loc = (0, 0), rowspan = 2, colspan = 1, fig = fig)
         ax0.set_title(f"DM = {dm}, First seen = {imp_start}, bins = {bins}, S/R = {SNR}")
