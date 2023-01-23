@@ -1,81 +1,79 @@
 import matplotlib.pyplot as plt
 from sklearn.cluster import DBSCAN
 import numpy as np
-
+import sys
 #%%
 
-file1= '/u/aga017/Desktop/SM0008L6_2018-03-21-13:51:10_BEAM_004.txt'
-file2 = '/Users/mehulagarwal/Downloads/8L6_Beam4.txt'
+file1= '/u/aga017/Desktop/SM0005L6_2018-02-23-17:56:51_BEAM_004.txt'
+file2 = '/Users/mehulagarwal/Downloads/BEAM_322.txt'
 
-try:
-    cands = np.loadtxt(file1, dtype='str')
-except:
-    cands = np.loadtxt(file2, dtype='str')
-header = cands[0,:].astype(str)    
-cands = cands[1:,:].astype(float)
+files = ['/Users/mehulagarwal/Downloads/BEAM_322.txt', '/Users/mehulagarwal/Downloads/BEAM_323.txt', '/Users/mehulagarwal/Downloads/BEAM_324.txt']
 
-time = cands[:,0]/20
-boxcar = 20*cands[:,1]/400
-DM = 20*cands[:,2]/40
-SNR = cands[:,3]
-cls_obj = DBSCAN(eps=1.1, min_samples=1)
+for ifile in files:
+	try:
+	    cands = np.loadtxt(file1, dtype='str')
+	except:
+	    cands = np.loadtxt(file2, dtype='str')
+	header = cands[0,:].astype(str)    
+	cands = cands[1:,:].astype(float)
+	
+	time = cands[:,0]/20
+	boxcar = 20*cands[:,1]/400
+	DM = 20*cands[:,2]/40
+	SNR = cands[:,3]
+	cls_obj = DBSCAN(eps=1.1, min_samples=1)
+	
+	#%%
 
-#%%
-'''
-#based on SNR and time
-#to check the scaling
-#plt.plot(cands[:,0], cands[:,3], '.')
-#plt.show()
-clusters = cls_obj.fit(np.column_stack([time, SNR/max(SNR)])).labels_
-uniq_clusters = np.unique(clusters)
-nclusters = len(uniq_clusters)
-#fig = plt.figure()
-#ax = fig.add_subplot(111, projection='3d')
-final_cands = []
-final_cands.append(header)
-for icluster in uniq_clusters:
-    cand = cands[icluster == clusters]
-    final_cand = cand[np.where(cand[:,3]==np.max(cand[:,3]))][0]
-    final_cands.append(final_cand)
-    plt.plot(cand[:,0], cand[:,3], '.')
-    #ax.scatter(final_cand[0], final_cand[1], final_cand[2], '.')
+	#based on SNR and time
+	#to check the scaling
+	#plt.plot(cands[:,0], cands[:,3], '.')
+	#plt.show()
+	clusters = cls_obj.fit(np.column_stack([time, SNR/max(SNR)])).labels_
+	uniq_clusters = np.unique(clusters)
+	nclusters = len(uniq_clusters)
+	#fig = plt.figure()
+	#ax = fig.add_subplot(111, projection='3d')
+	final_cands = []
+	final_cands.append(header)
+	for icluster in uniq_clusters:
+	    cand = cands[icluster == clusters]
+	    final_cand = cand[np.where(cand[:,3]==np.max(cand[:,3]))][0]
+	    final_cands.append(final_cand)
+	    plt.plot(cand[:,0], cand[:,3], '.')
+	    #ax.scatter(final_cand[0], final_cand[1], final_cand[2], '.')
 plt.show()
-final_cands = np.array(final_cands)
-print(len(final_cands))
-#np.savetxt('/Users/mehulagarwal/Downloads/time_snr.txt', final_cands, fmt='%s')
-'''
-
-
-#based on DM and time
-#to check the scaling
-#plt.plot(cands[:,0], cands[:,2], '.')
-#plt.show()
-clusters = cls_obj.fit(np.column_stack([time, DM])).labels_
-uniq_clusters = np.unique(clusters)
-nclusters = len(uniq_clusters)
-fig = plt.figure()
-#ax = fig.add_subplot(111, projection='3d')
-final_cands = []
-final_cands.append(header)
-for icluster in uniq_clusters:
-    cand = cands[icluster == clusters]
-    final_cand = cand[np.where(cand[:,3]==np.max(cand[:,3]))][0]
-    final_cands.append(final_cand)
-    y = cand[:,2]+(np.random.random(len(cand[:,2]))-0.5)*20
-    plt.plot(cand[:,0], y, '.', alpha=0.1)    
-    #ax.scatter(cand[:,0]/20, 20*cand[:,1]/400, 20*cand[:,2]/40, '.')
-plt.show()
+sys.exit(0)
 final_cands = np.array(final_cands)
 print(max(clusters))
-<<<<<<< HEAD
-try:
-    np.savetxt('/u/aga017/Desktop/time_dm.txt', final_cands, fmt='%s')
-except:
-    np.savetxt('/Users/mehulagarwal/Downloads/time_dm.txt', final_cands, fmt='%s')
-=======
-#np.savetxt('/Users/mehulagarwal/Downloads/time_dm.txt', final_cands, fmt='%s')
->>>>>>> afb05ecb64e591f97d495e8e5a924f6ba40cb340
+print(len(final_cands))
+#np.savetxt('/Users/mehulagarwal/Downloads/time_snr.txt', final_cands, fmt='%s')
 
+	
+'''	
+	#based on DM and time
+	#to check the scaling
+	#plt.plot(cands[:,0], cands[:,2], '.')
+	#plt.show()
+	clusters = cls_obj.fit(np.column_stack([time, DM])).labels_
+	uniq_clusters = np.unique(clusters)
+	nclusters = len(uniq_clusters)
+	fig = plt.figure()
+	#ax = fig.add_subplot(111, projection='3d')
+	final_cands = []
+	for icluster in uniq_clusters:
+	    cand = cands[icluster == clusters]
+	    final_cand = cand[np.where(cand[:,3]==np.max(cand[:,3]))][0]
+	    final_cands.append(final_cand)
+	    y = cand[:,2]+(np.random.random(len(cand[:,2]))-0.5)*20
+	    plt.plot(cand[:,0], y, '.', alpha=0.1)    
+	    #ax.scatter(cand[:,0]/20, 20*cand[:,1]/400, 20*cand[:,2]/40, '.')
+plt.show()
+sys.exit(0)
+final_cands = np.array(final_cands)
+print(max(clusters))
+#np.savetxt('/Users/mehulagarwal/Downloads/322.txt', final_cands, fmt='%s')
+'''
 
 '''
 #based on Boxcar and time
@@ -88,7 +86,6 @@ nclusters = len(uniq_clusters)
 fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
 final_cands = []
-final_cands.append(header)
 for icluster in uniq_clusters:
     cand = cands[icluster == clusters]
     final_cand = cand[np.where(cand[:,3]==np.max(cand[:,3]))][0]

@@ -1,88 +1,116 @@
-
-import numpy as np
 import matplotlib.pyplot as plt
 from sigpyproc.readers import FilReader as F
-import pathlib
-import argparse
+import numpy as np
 
-#%% Input
-#a = argparse.ArgumentParser()
-#a.add_argument('-f', type = str, help = 'Type the filename', default = '/u/aga017/Desktop/SM0005L6_2018-02-23-17:56:51_BEAM_004.txt')
-#args = a.parse_args()
-#filename = args.f
 
-#%%
-#candidates = np.loadtxt(filename+'.txt',dtype=str)
-try:
-    candidates = np.loadtxt('/u/aga017/Desktop/time_dm.txt', dtype = str)
-except:
-    candidates = np.loadtxt('/Users/mehulagarwal/Downloads/final.txt', dtype = str)
-candidates = candidates[1:]
+def flatten(time_series, interval):
+    xx = np.arange(len(time_series))
+    model = np.poly1d(np.polyfit(xx[::interval], time_series[::interval], 2 ))
+    y = model[2] * xx**2 + model[1] * xx + model[0]
+    return time_series - y
 
-def plotter(matrix, dm, imp_start, bins, area):
-  
+
+def average(array, idx, bins):
+    if idx%bins == 0:
+        out = array
+        idx_2 = idx
+    else:
+        out = np.pad(array, (bins - idx%bins, 0), 'constant')
+        idx_2 = idx + bins - idx%bins
+    
+    if (len(array) - (idx+bins)) % bins == 0:
+        out = out
+    else:
+        end = bins - (len(array) - (idx+bins)) % bins
+        out = np.pad(out, (0, end), 'constant')
+    
+    out_1 = np.reshape(out, [int(len(out)/bins),bins]) #reshapes
+    idx_2 = idx_2//bins
+    out_2 = np.sum(out_1, axis=1)
+    non_zero_count = np.count_nonzero(out_1, axis=1)
+    out_2 = out_2 / non_zero_count
+    return out_2, idx_2
+
+def middle(a, idx, points):
+
+    left_out_end = len(a) - (idx+1)
+    if (left_out_end < points) and (left_out_end < idx):
+        start = idx-left_out_end
+        end = -1
+        a = a[idx-left_out_end:]
+        idx = left_out_end
+    elif (idx < left_out_end) and (idx < points):
+        start = 0
+        end = idx+idx+1
+        a = a[:idx+idx+1]
+    else:
+        start = idx-points
+        end = idx+points+1
+        a = a[idx-points:idx+points+1]
+        idx = points
+    return a, start, end, idx
+
+    
+
+def plotter(matrix, dm, imp_start, bins):
+    fig = plt.figure()
+    ax0 = plt.subplot2grid(shape = (3, 1), loc = (0, 0), rowspan = 2, colspan = 1, fig = fig)
+    ax0.set_title(f"DM = {dm}, First seen = {imp_start}, bins = {bins}, S/R = {SNR}")
+    ax1 = plt.subplot2grid(shape = (3, 1), loc = (2, 0), rowspan = 1, colspan = 1, fig = fig, sharex = ax0)
+    
     matrix = F(matrix)
     nsamps = matrix.header.nsamples
     n_chans = matrix.header.nchans
     max_f = matrix.header.fch1
-    min_f = max_f + matrix.header.foff * n_chans
+    min_f = max_f + matrix.header.foff * (n_chans-1)
     
     matrix = matrix.read_block(0, nsamps)
-    
-    area = area + (bins - (area % bins)) 
+
     
     b = ((min_f/max_f)**2)*dm/(1-(min_f/max_f)**2)
     a = max_f*((b)**0.5)
     freq = np.linspace(max_f, min_f, n_chans)
-  
-    out = np.empty([n_chans, int((2 * area + bins)/bins)])
+
+    c = nsamps - int((a/(freq[-1]))**2 - b)
+
+    final = []
     for j in range(n_chans):
-        imp = int((a/(freq[j]))**2 - b) + imp_start
-        print(imp, imp_start)
-        area_start = imp - area
-        start_range = matrix[j][(np.linspace(area_start, imp + bins - 1, imp + bins - area_start) % nsamps).astype(int)]
-
-        area_end = imp + bins + area
-        end_range = matrix[j][(np.linspace(imp + bins, area_end - 1, area_end - (imp + bins)) % nsamps).astype(int)]
-
-        channel = np.concatenate((start_range, end_range))
-        channel = np.reshape(channel, [int(len(channel)/bins), bins])
-        new_channel = np.average(channel, axis = 1)
-        out[j] = new_channel
-    
-    sum_ = np.sum(out, axis = 0)
+        #imp = int((a/(freq[j]))**2 - b) + imp_start
         
-    return out, sum_
+        start = int((a/(freq[j]))**2 - b)
+        end = start + c
+ 
 
-#new_dir = pathlib.Path('/u/aga017/Desktop/', filename) #disable this on your machine or change accordingly
-#new_dir.mkdir(parents=True, exist_ok=True) #disable this on your machine or change accordingly
+        channel = matrix[j][start:end]
+        channel, idx_2 = average(channel,imp_start,bins)
+        final.append(channel)
+
+    sum_ = np.average(final, axis = 0)
+    sum_ =  flatten(sum_, 1)
+    sum_, start, end, max_ = middle(np.array(sum_), idx_2, 50)
+    final = np.array(final)
+    if end == -1:
+        final = final[:, start:]
+    else:
+        final = final[:, start:end]
+    plt.subplots_adjust(hspace = 0)
+    ax0.imshow(final, aspect = 'auto', interpolation = 'None')
+    ax0.axes.get_xaxis().set_visible(False)
+    ax1.plot(sum_, 'r-')
+    ax1.plot(max_, sum_[max_], 'b*')
+    plt.show()
+    return final, sum_
+
+
+try:
+    candidates = np.loadtxt('/u/aga017/Desktop/time_dm.txt', dtype = str)
+except:
+    candidates = np.loadtxt('/Users/mehulagarwal/Downloads/time_dm.txt', dtype = str)
+candidates = candidates[1:]
+
 for i in range(1, len(candidates)):
     dm = int(float(candidates[i,2]))
     imp_start = int(float(candidates[i,0]))
     SNR = round(float(candidates[i,3]),2)
     bins = int(float(candidates[i,1]))
-    try:
-        out, sum_ = plotter('/u/aga017/Desktop/2018-03-21-13:51:10.fil', dm, imp_start, bins, bins*20)
-    except:
-        out, sum_ = plotter('/Users/mehulagarwal/Downloads/2018-07-08-02 58 17.fil', dm, imp_start, bins, bins*100)
-    #temp = np.where(sum_ > (3*np.std(sum_) + np.mean(sum_)))
-    #check1 = len(temp[0]) #enable this if you want to look at sharp spikes only
-    #check = 0
-    #if np.std(sum_)<2*SNR:
-    #    check=1
-    check = 1
-    check1 = 1
-    if (check+check1 == 2):
-        fig = plt.figure()
-        ax0 = plt.subplot2grid(shape = (3, 1), loc = (0, 0), rowspan = 2, colspan = 1, fig = fig)
-        ax0.set_title(f"DM = {dm}, First seen = {imp_start}, bins = {bins}, S/R = {SNR}")
-        ax1 = plt.subplot2grid(shape = (3, 1), loc = (2, 0), rowspan = 1, colspan = 1, fig = fig, sharex = ax0)
-        plt.subplots_adjust(hspace = 0)
-        ax0.imshow(out, aspect = 'auto', interpolation = 'None')
-        ax0.axes.get_xaxis().set_visible(False)
-        ax1.plot(sum_, 'r-')
-        plt.show()
-        #fig.savefig(new_dir / str(i), format = 'png', dpi = 300) #disable this on your machine or change accordingly
-        plt.show()
-    
-            
+    out, sum_ = plotter('/Users/mehulagarwal/Downloads/2018-07-08-02 58 17.fil', dm, imp_start, bins)
