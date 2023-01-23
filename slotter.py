@@ -29,20 +29,20 @@ cls_obj = DBSCAN(eps=1.1, min_samples=1)
 clusters = cls_obj.fit(np.column_stack([time, SNR/max(SNR)])).labels_
 uniq_clusters = np.unique(clusters)
 nclusters = len(uniq_clusters)
-fig = plt.figure()
-ax = fig.add_subplot(111, projection='3d')
+#fig = plt.figure()
+#ax = fig.add_subplot(111, projection='3d')
 final_cands = []
 final_cands.append(header)
 for icluster in uniq_clusters:
     cand = cands[icluster == clusters]
     final_cand = cand[np.where(cand[:,3]==np.max(cand[:,3]))][0]
     final_cands.append(final_cand)
-    #plt.plot(cand[:,0], cand[:,3], '.')
-    ax.scatter(final_cand[0], final_cand[1], final_cand[2], '.')
+    plt.plot(cand[:,0], cand[:,3], '.')
+    #ax.scatter(final_cand[0], final_cand[1], final_cand[2], '.')
 plt.show()
 final_cands = np.array(final_cands)
 print(len(final_cands))
-np.savetxt('/Users/mehulagarwal/Downloads/time_snr.txt', final_cands, fmt='%s')
+#np.savetxt('/Users/mehulagarwal/Downloads/time_snr.txt', final_cands, fmt='%s')
 '''
 
 
@@ -61,15 +61,20 @@ for icluster in uniq_clusters:
     cand = cands[icluster == clusters]
     final_cand = cand[np.where(cand[:,3]==np.max(cand[:,3]))][0]
     final_cands.append(final_cand)
-    plt.plot(cand[:,0], cand[:,2], '.')    
+    y = cand[:,2]+(np.random.random(len(cand[:,2]))-0.5)*20
+    plt.plot(cand[:,0], y, '.', alpha=0.1)    
     #ax.scatter(cand[:,0]/20, 20*cand[:,1]/400, 20*cand[:,2]/40, '.')
 plt.show()
 final_cands = np.array(final_cands)
 print(max(clusters))
+<<<<<<< HEAD
 try:
     np.savetxt('/u/aga017/Desktop/time_dm.txt', final_cands, fmt='%s')
 except:
     np.savetxt('/Users/mehulagarwal/Downloads/time_dm.txt', final_cands, fmt='%s')
+=======
+#np.savetxt('/Users/mehulagarwal/Downloads/time_dm.txt', final_cands, fmt='%s')
+>>>>>>> afb05ecb64e591f97d495e8e5a924f6ba40cb340
 
 
 '''
@@ -94,9 +99,9 @@ plt.show()
 final_cands = np.array(final_cands)
 print(max(clusters))
 np.savetxt('/Users/mehulagarwal/Downloads/time_boxcar.txt', final_cands, fmt='%s')
+'''
 
-
-
+'''
 #based on 3d
 clusters = cls_obj.fit(np.column_stack([time, boxcar, DM])).labels_
 uniq_clusters = np.unique(clusters)
