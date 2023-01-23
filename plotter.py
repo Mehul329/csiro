@@ -14,7 +14,7 @@ import argparse
 #%%
 #candidates = np.loadtxt(filename+'.txt',dtype=str)
 try:
-    candidates = np.loadtxt('/u/aga017/Desktop/final3d.txt', dtype = str)
+    candidates = np.loadtxt('/u/aga017/Desktop/time_dm.txt', dtype = str)
 except:
     candidates = np.loadtxt('/Users/mehulagarwal/Downloads/final.txt', dtype = str)
 candidates = candidates[1:]
@@ -34,18 +34,17 @@ def plotter(matrix, dm, imp_start, bins, area):
     b = ((min_f/max_f)**2)*dm/(1-(min_f/max_f)**2)
     a = max_f*((b)**0.5)
     freq = np.linspace(max_f, min_f, n_chans)
-    
+  
     out = np.empty([n_chans, int((2 * area + bins)/bins)])
     for j in range(n_chans):
         imp = int((a/(freq[j]))**2 - b) + imp_start
-        
+        print(imp, imp_start)
         area_start = imp - area
         start_range = matrix[j][(np.linspace(area_start, imp + bins - 1, imp + bins - area_start) % nsamps).astype(int)]
 
         area_end = imp + bins + area
         end_range = matrix[j][(np.linspace(imp + bins, area_end - 1, area_end - (imp + bins)) % nsamps).astype(int)]
 
-       
         channel = np.concatenate((start_range, end_range))
         channel = np.reshape(channel, [int(len(channel)/bins), bins])
         new_channel = np.average(channel, axis = 1)
@@ -66,12 +65,13 @@ for i in range(1, len(candidates)):
         out, sum_ = plotter('/u/aga017/Desktop/2018-03-21-13:51:10.fil', dm, imp_start, bins, bins*20)
     except:
         out, sum_ = plotter('/Users/mehulagarwal/Downloads/2018-07-08-02 58 17.fil', dm, imp_start, bins, bins*100)
-    temp = np.where(sum_ > (3*np.std(sum_) + np.mean(sum_)))
-    check1 = len(temp[0]) #enable this if you want to look at sharp spikes only
-    check = 0
-    if np.std(sum_)<2*SNR:
-        check=1
-    #check = 1
+    #temp = np.where(sum_ > (3*np.std(sum_) + np.mean(sum_)))
+    #check1 = len(temp[0]) #enable this if you want to look at sharp spikes only
+    #check = 0
+    #if np.std(sum_)<2*SNR:
+    #    check=1
+    check = 1
+    check1 = 1
     if (check+check1 == 2):
         fig = plt.figure()
         ax0 = plt.subplot2grid(shape = (3, 1), loc = (0, 0), rowspan = 2, colspan = 1, fig = fig)

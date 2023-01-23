@@ -4,7 +4,7 @@ import numpy as np
 
 #%%
 
-file1= '/u/aga017/Desktop/SM0005L6_2018-02-23-17:56:51_BEAM_004.txt'
+file1= '/u/aga017/Desktop/SM0008L6_2018-03-21-13:51:10_BEAM_004.txt'
 file2 = '/Users/mehulagarwal/Downloads/8L6_Beam4.txt'
 
 try:
@@ -56,6 +56,7 @@ nclusters = len(uniq_clusters)
 fig = plt.figure()
 #ax = fig.add_subplot(111, projection='3d')
 final_cands = []
+final_cands.append(header)
 for icluster in uniq_clusters:
     cand = cands[icluster == clusters]
     final_cand = cand[np.where(cand[:,3]==np.max(cand[:,3]))][0]
@@ -65,7 +66,10 @@ for icluster in uniq_clusters:
 plt.show()
 final_cands = np.array(final_cands)
 print(max(clusters))
-np.savetxt('/Users/mehulagarwal/Downloads/time_dm.txt', final_cands, fmt='%s')
+try:
+    np.savetxt('/u/aga017/Desktop/time_dm.txt', final_cands, fmt='%s')
+except:
+    np.savetxt('/Users/mehulagarwal/Downloads/time_dm.txt', final_cands, fmt='%s')
 
 
 '''
@@ -79,6 +83,7 @@ nclusters = len(uniq_clusters)
 fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
 final_cands = []
+final_cands.append(header)
 for icluster in uniq_clusters:
     cand = cands[icluster == clusters]
     final_cand = cand[np.where(cand[:,3]==np.max(cand[:,3]))][0]
