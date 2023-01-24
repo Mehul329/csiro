@@ -13,7 +13,7 @@ cand_list = []
 cls_obj = DBSCAN(eps=1.1, min_samples=1)
 for i in range(len(beams)):
     beam_no = int(beams[i].split('_')[1].split('.')[0])
-    if beam_no in [173,174]:#175,176,177,178,179]:
+    if beam_no in np.linspace(2,200,200-2+1).astype(int):
         print(beams[i])
         cands = np.loadtxt(file1+'/'+beams[i], dtype='str')
         cands = cands[1:,:].astype(float) / 20
@@ -32,7 +32,7 @@ for i in range(len(beams)):
         final_cands = np.array(final_cands)
         final_cands[:, 3] *= 20
         cand_list.extend(final_cands)
-        plt.plot(final_cands[:,0]*20, final_cands[:,1]*20, '.')
+        plt.plot(final_cands[:,0]*20, final_cands[:,2]*20, '.')
         plt.xlim([0,600000])
         plt.show()
 cand_list = np.array(cand_list)

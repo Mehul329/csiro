@@ -87,7 +87,7 @@ def plotter(matrix, dm, imp_start, bins):
 
     sum_ = np.average(final, axis = 0)
     sum_ =  flatten(sum_, 1)
-    sum_, start, end, max_ = middle(np.array(sum_), idx_2, 50)
+    sum_, start, end, max_ = middle(np.array(sum_), idx_2, 25)
     final = np.array(final)
     if end == -1:
         final = final[:, start:]
@@ -97,20 +97,55 @@ def plotter(matrix, dm, imp_start, bins):
     ax0.imshow(final, aspect = 'auto', interpolation = 'None')
     ax0.axes.get_xaxis().set_visible(False)
     ax1.plot(sum_, 'r-')
-    ax1.plot(max_, sum_[max_], 'b*')
+    #ax1.plot(max_, sum_[max_], 'b*')
     plt.show()
     return final, sum_
 
 
-try:
-    candidates = np.loadtxt('/u/aga017/Desktop/time_dm.txt', dtype = str)
-except:
-    candidates = np.loadtxt('/Users/mehulagarwal/Downloads/time_dm.txt', dtype = str)
-candidates = candidates[1:]
+candidates = np.load('/u/aga017/Desktop/plot_cands.npy')
+    
 
 for i in range(1, len(candidates)):
-    dm = int(float(candidates[i,2]))
-    imp_start = int(float(candidates[i,0]))
+    dm = int(float(candidates[i,2])) * 20
+    imp_start = int(float(candidates[i,0])) * 20
     SNR = round(float(candidates[i,3]),2)
-    bins = int(float(candidates[i,1]))
-    out, sum_ = plotter('/Users/mehulagarwal/Downloads/2018-07-08-02 58 17.fil', dm, imp_start, bins)
+    bins = int(float(candidates[i,1])) * 20
+    beam = int(candidates[i,-1])
+    beam_file = str(np.core.defchararray.zfill(str(beam), 3))
+    filter_bank = '/u/aga017/Desktop/2018-07-02-03:55:09/BEAM_'+beam_file+'/2018-07-02-03:55:09.fil'
+    out, sum_ = plotter(filter_bank, dm, imp_start, bins)
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
