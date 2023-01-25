@@ -10,7 +10,7 @@ a.add_argument('-t', type = str, help = 'Type the full path of tape directory wi
 args = a.parse_args()
 node = args.n
 tape = args.t
-code = '/home/aga017/codes/csiro/finder.py'
+code = '/home/aga017/codes/csiro/finder_3.py'
 
 basedir = tape
 observations = os.listdir(basedir)
