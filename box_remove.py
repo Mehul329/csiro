@@ -14,7 +14,7 @@ import os
 #this porgram should go into each observation (327) and cluster data for all beams at once
 #it take the location of observations number
 
-start = time.time()
+
 file1 = '/u/aga017/Desktop/output'
 beams = os.listdir(file1) 
 
@@ -37,5 +37,14 @@ def box_remover(array):
             count += 1
     return final_cands[:count]
 
+start = time.time()
+cands = np.loadtxt(file1+'/'+beams[174], dtype='str')
+cands = cands[1:,:].astype(float)
+lst = box_remover(cands)
+cands = np.loadtxt(file1+'/'+beams[175], dtype='str')
+cands = cands[1:,:].astype(float)
+lst = box_remover(cands)
+cands = np.loadtxt(file1+'/'+beams[176], dtype='str')
+cands = cands[1:,:].astype(float)
 lst = box_remover(cands)
 print(time.time()-start)
