@@ -80,7 +80,7 @@ def find_cands(filterbank, t_x, threshold, dm, kernel_lst):
     
     
     for i in range(len(possible_a)):
-        print("DM is : ", dm[i])
+        #print("DM is : ", dm[i])
         new_data[0] = data[0]
         for j in range(1, n_chans):
             freq = possible_freq[j]
