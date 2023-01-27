@@ -134,8 +134,8 @@ def find_cands(filterbank, t_x, threshold, dm, kernel_lst):
     final_cands = np.row_stack([titles, final_cands]).astype(str)
     return final_cands
 
-find_cands('/u/aga017/Desktop/2018-03-01-14:17:51/BEAM_063/2018-03-01-14:17:51.fil', 20, 8, np.linspace(10,20,2).astype(int), np.linspace(5,10,5).astype(int))
-'''
+#find_cands('/u/aga017/Desktop/2018-03-01-14:17:51/BEAM_063/2018-03-01-14:17:51.fil', 20, 8, np.linspace(10,20,2).astype(int), np.linspace(5,10,5).astype(int))
+
 outdir = "/scratch2/aga017/output/"
 infile = filename.split('/')[-5:]
 outname = outdir+infile[0]+'_'+infile[1]+'_'+infile[3]+'.txt'
@@ -145,4 +145,3 @@ sentence = f"#The data is being sruched by a factor of {t_x}. DM search is linea
 with open(outname, "w") as file:
     file.write(sentence + "\n")
     np.savetxt(file, find_cands(filename, t_x, threshold, dm, kernel_lst), fmt = '%s')
-'''
