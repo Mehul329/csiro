@@ -75,6 +75,7 @@ def find_cands(filterbank, t_x, threshold, dm, kernel_lst):
     SNRs = []
     Bins = []
     Times = []
+    DMs = []
 
     new_data = np.empty([n_chans,nsamps])
     
@@ -122,7 +123,8 @@ def find_cands(filterbank, t_x, threshold, dm, kernel_lst):
         Times.extend(list(cands[:,0]))
         Bins.extend(list(cands[:,1]))
         SNRs.extend(list(cands[:,2]))
-        DMs = [dm[i]] * len(SNRs)
+        DMs_temp = [dm[i]] * len(Times_temp)
+        DMs.extend(DMs_temp)
     
     final_cands = np.column_stack([Times, Bins, DMs, SNRs])
     titles = np.array(['Times', 'Bins', 'DMs', 'SNRs'])

@@ -39,13 +39,13 @@ def cluster_each_beam(beam_cands, time_scale, dm_scale, box_scale, radius, beam_
     return cand_lst
 
 
-file1 = '/u/aga017/Desktop/output'
+file1 = '/u/aga017/Desktop/Output'
 beams = os.listdir(file1) 
 #beams = beams[173:176]
 
 filtered_beams = []
 for beam_cand in beams:
-    beam_no = int(beam_cand.split('.')[0].split('_')[1])
+    beam_no = int(beam_cand.split('_')[-1].split('.')[0])
     beam_cand = np.loadtxt(file1+'/'+beam_cand, dtype='str')
     beam_cand = beam_cand[1:,:].astype(float)
     filtered_beams.extend(cluster_each_beam(beam_cand, 50, 40, 20, 1.1, beam_no))
