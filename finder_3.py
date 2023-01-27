@@ -5,7 +5,7 @@ from numba import jit
 
 #%% Input
 a = argparse.ArgumentParser()
-a.add_argument('-f', type = str, help = 'Type the filename', default = '/u/aga017/Desktop/2018-07-02-03:55:09/BEAM_176/2018-07-02-03:55:09.fil')
+a.add_argument('-f', type = str, help = 'Type the filename', default = '/u/aga017/Desktop/2018-03-01-14:17:51/BEAM_063/2018-03-01-14:17:51.fil')
 a.add_argument('-t_x', type = int, help = 'Give the value for scrunching', default = 20)
 a.add_argument('-k', type = int, nargs = 3, help = 'Bins list: Start, Factor, End', default = [1,1.25,800])
 a.add_argument('-dm', type = int, nargs = 3, help = 'DM list: Start, End, Steps', default = [1,90,2])
@@ -126,17 +126,20 @@ def find_cands(filterbank, t_x, threshold, dm, kernel_lst):
         Times.extend(list(cands[:,0]))
         Bins.extend(list(cands[:,1]))
         SNRs.extend(list(cands[:,2]))
-        DMs.extend(DMs_temp)
+        DMs.extend(DMs_temp[:len(cands[:,2])])
     
     final_cands = np.column_stack([Times, Bins, DMs, SNRs])
     titles = np.array(['Times', 'Bins', 'DMs', 'SNRs'])
     final_cands = np.row_stack([titles, final_cands]).astype(str)
     return final_cands
 
+#find_cands('/u/aga017/Desktop/2018-03-01-14:17:51/BEAM_063/2018-03-01-14:17:51.fil', 20, 8, np.linspace(10,20,2).astype(int), np.linspace(5,10,5).astype(int))
+
 outdir = "/scratch2/aga017/output/"
 infile = filename.split('/')[-5:]
 outname = outdir+infile[0]+'_'+infile[1]+'_'+infile[3]+'.txt'
 sentence = f"#The data is being sruched by a factor of {t_x}. DM search is linear from {dm_start} to {dm_end} with a spacing of {dm_space}. Boxcarring is geometric from {k_start} to {int(k_end)} with a factor of {k_factor}. The threshold is {threshold} and the curve of best fit is being derived by jumping to every {args.flattening_jump} point in the scrunched data"
+
 
 with open(outname, "w") as file:
     file.write(sentence + "\n")
