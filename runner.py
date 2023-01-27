@@ -14,7 +14,6 @@ code = '/home/aga017/codes/csiro/finder_3.py'
 
 basedir = tape
 observations = os.listdir(basedir)
-observations = observations[1:]
 obs_dir = np.core.defchararray.add(basedir, observations)
 func = np.vectorize(lambda x:x+x.split('/')[-4])
 
