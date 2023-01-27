@@ -1,13 +1,34 @@
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 from sklearn.cluster import DBSCAN
 import numpy as np
 import os
 import time
+import argparse
+
+
+#%%
+
+a = argparse.ArgumentParser()
+a.add_argument('-t', type = str, help = 'Type the tape without /')
+a.add_argument('-o', type = str, help = 'Type the observation without /')
+a.add_argument('-t_s', type = float, help = 'Give the value for time scaling', default = 100)
+a.add_argument('-d_s', type = float, help = 'Give the value for DM scaling', default = 40)
+a.add_argument('-bx_s', type = float, help = 'Give the value for boxcar scaling', default = 20)
+a.add_argument('-b_s', type = float, help = 'Give the value for beam scaling', default = 5)
+a.add_argument('-r', type = float, help = 'Give the radius for clustering', default = 1.1)
+
+args = a.parse_args()
+tape = args.t
+observation = args.o
+time_scale = args.t_s
+dm_scale = args.d_s
+box_scale = args.bx_s
+beam_scale = args.b_s
+radius = args.r
+
 #%%
 #this porgram should go into each observation (327) and cluster data for all beams at once
 #it take the location of observations number
-
-intime = time.time()
 
 def cluster_each_beam(beam_cands, time_scale, dm_scale, box_scale, radius, beam_no):
     #dm_scale = within what range of DM would you consider it one cluster = 40
@@ -39,20 +60,6 @@ def cluster_each_beam(beam_cands, time_scale, dm_scale, box_scale, radius, beam_
     return cand_lst
 
 
-file1 = '/u/aga017/Desktop/Output'
-beams = os.listdir(file1) 
-#beams = beams[173:176]
-
-filtered_beams = []
-for beam_cand in beams:
-    beam_no = int(beam_cand.split('_')[-1].split('.')[0])
-    beam_cand = np.loadtxt(file1+'/'+beam_cand, dtype='str')
-    beam_cand = beam_cand[1:,:].astype(float)
-    filtered_beams.extend(cluster_each_beam(beam_cand, 50, 40, 20, 1.1, beam_no))
-    
-filtered_beams = np.array(filtered_beams)
-
-#%%
 def cluster_all_beams(filtered_beams, time_scale, dm_scale, beam_scale, radius):
     #dm_scale = within what range of DM would you consider it one cluster = 40
     #time_scale = within what range of time would you consider it one cluster = 50
@@ -80,16 +87,32 @@ def cluster_all_beams(filtered_beams, time_scale, dm_scale, beam_scale, radius):
             candidate = cand[cand[:,-2] == np.max(cand[:,-2])][0]
             final_cands.append(candidate)
             count+=1
-            plt.plot(candidate[0], candidate[2], '-')
+            #plt.plot(candidate[0], candidate[2], '-')
     #plt.ylim([0,250])
     #plt.show()
     print(f'Reduced from {len(filtered_beams)} to {n_clusters} to {count} in {time.time()-start}')
     
     return final_cands
 
-final_cands = np.array(cluster_all_beams(filtered_beams, 100, 40, 5, 1.1))
-np.save('/u/aga017/Desktop/final_cands', final_cands)
+start = time.time()
+filtered_beams = []
+beams = np.linspace(2,352,352-2+1).astype(int)
+beams = np.core.defchararray.zfill(beams.astype(str), 3)
+for beam in beams:
+    path = '/scratch2/aga017/output/'+tape+'/'+tape+'_'+observation+'_BEAM_'+beam+'.txt' 
+    print(path)
+    print(int(beam))
+    if os.path.exists(path):
+        beam_cand = np.loadtxt(path, dtype='str')
+        beam_cand = beam_cand[1:,:].astype(float)     
+        filtered_beams.extend(cluster_each_beam(beam_cand, time_scale, dm_scale, box_scale, radius, int(beam)))
+    else:
+        print(f"{path} does not exist")
+    
+filtered_beams = np.array(filtered_beams)
+final_cands = np.array(cluster_all_beams(filtered_beams, time_scale, dm_scale, beam_scale, radius))
 header = np.array(['Time', 'Boxcar', 'DM', 'SNR', 'BEAM'])
 final_cands = np.row_stack([header, final_cands])
-np.savetxt('/u/aga017/Desktop/final_cands.txt', final_cands, fmt = '%s')
-print(time.time() - intime)
+outname = '/scratch2/aga017/output/'+tape+'/'+tape+'_'+observation+'_.txt'
+np.savetxt(outname, final_cands, fmt = '%s')
+print(f"Total time taken for this obs : {time.time()-start}")
