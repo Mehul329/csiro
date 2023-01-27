@@ -101,7 +101,6 @@ beams = np.core.defchararray.zfill(beams.astype(str), 3)
 for beam in beams:
     path = '/scratch2/aga017/output/'+tape+'/'+tape+'_'+observation+'_BEAM_'+beam+'.txt' 
     print(path)
-    print(int(beam))
     if os.path.exists(path):
         beam_cand = np.loadtxt(path, dtype='str')
         beam_cand = beam_cand[1:,:].astype(float)     
