@@ -22,7 +22,7 @@ if node == 33:
     else:
         observations = observations[obs_blocks]
 else:
-    observations = observations[[obs_blocks]]
+    observations = observations[obs_blocks]
 
 for observation in observations:
     cmd = f"python3 {code} -t {tape_no} -o {observation}"
