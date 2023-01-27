@@ -28,4 +28,4 @@ else:
 for observation in observations:
     cmd = f"python3 {code} -t {tape_no} -o {observation}"
     print(cmd)    
-    #os.system(cmd)
+    os.system(cmd)
