@@ -134,7 +134,7 @@ def find_cands(filterbank, t_x, threshold, dm, kernel_lst):
     final_cands = np.row_stack([titles, final_cands]).astype(str)
     return final_cands
 
-#find_cands('/u/aga017/Desktop/2018-03-01-14:17:51/BEAM_063/2018-03-01-14:17:51.fil', 20, 8, np.linspace(10,20,2).astype(int), np.linspace(5,10,5).astype(int))
+#out = find_cands('/u/aga017/Desktop/2018-03-01-14:17:51/BEAM_063/2018-03-01-14:17:51.fil', 20, 8, np.linspace(10,40,20).astype(int), np.linspace(5,10,5).astype(int))
 
 outdir = "/scratch2/aga017/output/"
 infile = filename.split('/')[-5:]
