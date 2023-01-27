@@ -9,50 +9,7 @@ def flatten(time_series, interval):
     y = model[2] * xx**2 + model[1] * xx + model[0]
     return time_series - y
 
-
-def average(array, idx, bins):
-    if idx%bins == 0:
-        out = array
-        idx_2 = idx
-    else:
-        out = np.pad(array, (bins - idx%bins, 0), 'constant')
-        idx_2 = idx + bins - idx%bins
-    
-    if (len(array) - (idx+bins)) % bins == 0:
-        out = out
-    else:
-        end = bins - (len(array) - (idx+bins)) % bins
-        out = np.pad(out, (0, end), 'constant')
-    
-    out_1 = np.reshape(out, [int(len(out)/bins),bins]) #reshapes
-    idx_2 = idx_2//bins
-    out_2 = np.sum(out_1, axis=1)
-    non_zero_count = np.count_nonzero(out_1, axis=1)
-    out_2 = out_2 / non_zero_count
-    return out_2, idx_2
-
-def middle(a, idx, points):
-
-    left_out_end = len(a) - (idx+1)
-    if (left_out_end < points) and (left_out_end < idx):
-        start = idx-left_out_end
-        end = -1
-        a = a[idx-left_out_end:]
-        idx = left_out_end
-    elif (idx < left_out_end) and (idx < points):
-        start = 0
-        end = idx+idx+1
-        a = a[:idx+idx+1]
-    else:
-        start = idx-points
-        end = idx+points+1
-        a = a[idx-points:idx+points+1]
-        idx = points
-    return a, start, end, idx
-
-    
-
-def plotter(matrix, dm, imp_start, bins):
+def plotter(matrix, dm, imp_start, bins, blocks):
     fig = plt.figure()
     ax0 = plt.subplot2grid(shape = (3, 1), loc = (0, 0), rowspan = 2, colspan = 1, fig = fig)
     ax0.set_title(f"DM = {dm}, First seen = {imp_start}, bins = {bins}, S/R = {SNR}")
@@ -66,7 +23,6 @@ def plotter(matrix, dm, imp_start, bins):
     
     matrix = matrix.read_block(0, nsamps)
 
-    
     b = ((min_f/max_f)**2)*dm/(1-(min_f/max_f)**2)
     a = max_f*((b)**0.5)
     freq = np.linspace(max_f, min_f, n_chans)
@@ -77,11 +33,36 @@ def plotter(matrix, dm, imp_start, bins):
     for j in range(n_chans):
         #imp = int((a/(freq[j]))**2 - b) + imp_start
         
-        start = int((a/(freq[j]))**2 - b)
-        end = start + c
- 
+        temp_start = int((a/(freq[j]))**2 - b)
+        temp_end = temp_start + c
+        
+        channel = matrix[j][temp_start:temp_end]
+        
+        rem_start = imp_start%bins
+        start_blocks_av = (imp_start - rem_start)//bins
 
-        channel = matrix[j][start:end]
+        if start_blocks_av <= blocks:
+            start = rem_start
+        else:
+            extra_block = start_blocks_av - blocks
+            start = rem_start + extra_block * bins
+
+        rem_end = (len(a)-(imp_start + bins))%bins
+        end_blocks_av = (len(a)-(imp_start + bins))//bins
+
+        if end_blocks_av <= blocks:
+            end = rem_end
+        else:
+            extra_block = end_blocks_av - blocks
+            end = (len(a)-(imp_start + bins)) - extra_block * bins
+            
+        print(start, -end)
+        if rem_end == 0:    
+            print(a[start:])
+        else:
+            print(a[start:-end])
+            
+        
         channel, idx_2 = average(channel,imp_start,bins)
         final.append(channel)
 

@@ -20,7 +20,7 @@ if node == 33:
         rem = obs_blocks[-1] % (len(observations) - 1)
         obs_blocks = obs_blocks[:-rem]
     else:
-        observations = observations[[obs_blocks]]
+        observations = observations[obs_blocks]
 else:
     observations = observations[[obs_blocks]]
 
