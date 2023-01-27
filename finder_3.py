@@ -102,6 +102,7 @@ def find_cands(filterbank, t_x, threshold, dm, kernel_lst):
         SNRs_temp = []
         Bins_temp = []
         Times_temp = []
+        DMs_temp = []
         
         for kernel in kernel_lst:
             #print("Kernel is: ", kernel)
@@ -113,17 +114,18 @@ def find_cands(filterbank, t_x, threshold, dm, kernel_lst):
             snrs = mvaverage_arr[peak_locs]
             times = np.arange(len(mvaverage_arr))[peak_locs] * t_x
             bins = kernel * t_x * np.ones_like(snrs)
+            dms = [dm[i]] * len(bins)
 
             SNRs_temp.extend(list(snrs))
             Bins_temp.extend(list(bins))
             Times_temp.extend(list(times))
+            DMs_temp.extend(list(dms))
             
         cands = np.column_stack([Times_temp, Bins_temp, SNRs_temp])
         cands = box_remover(cands)
         Times.extend(list(cands[:,0]))
         Bins.extend(list(cands[:,1]))
         SNRs.extend(list(cands[:,2]))
-        DMs_temp = [dm[i]] * len(Times_temp)
         DMs.extend(DMs_temp)
     
     final_cands = np.column_stack([Times, Bins, DMs, SNRs])
