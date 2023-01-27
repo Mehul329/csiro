@@ -102,7 +102,8 @@ def plotter(matrix, dm, imp_start, bins):
     return final, sum_
 
 
-candidates = np.load('/u/aga017/Desktop/plot_cands.npy')
+candidates = np.loadtxt('/u/aga017/Desktop/Output/SM0006L6_2018-03-01-14:17:51_BEAM_352.txt', dtype=str)
+candidates = candidates[1:,:].astype(float)
     
 
 for i in range(1, len(candidates)):
@@ -112,7 +113,7 @@ for i in range(1, len(candidates)):
     bins = int(float(candidates[i,1])) * 20
     beam = int(candidates[i,-1])
     beam_file = str(np.core.defchararray.zfill(str(beam), 3))
-    filter_bank = '/u/aga017/Desktop/2018-07-02-03:55:09/BEAM_'+beam_file+'/2018-07-02-03:55:09.fil'
+    filter_bank = '/u/aga017/Desktop/2018-03-01-14:17:51/BEAM_'+beam_file+'/2018-03-01-14:17:51.fil'
     out, sum_ = plotter(filter_bank, dm, imp_start, bins)
         
         
