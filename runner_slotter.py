@@ -13,12 +13,13 @@ code = '/home/aga017/codes/csiro/slotter.py'
 
 basedir = tape
 tape_no = tape.split('/')[-2]
-observations = os.listdir(basedir)
+observations = np.array(os.listdir(basedir))
 obs_blocks = (np.linspace(0,9,10)+(node-1)*10).astype(int)
 if node == 33:
     if len(observations) - 1 < obs_blocks[-1]:
         rem = obs_blocks[-1] % (len(observations) - 1)
         obs_blocks = obs_blocks[:-rem]
+        observations = observations[obs_blocks]
     else:
         observations = observations[obs_blocks]
 else:
