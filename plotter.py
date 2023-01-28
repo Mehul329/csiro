@@ -124,6 +124,8 @@ for i in range(len(candidates)):
     name = f"/scratch2/aga017/output/{tape_no}/plotter_results/{tape_no}_{observation}_{beam}_{i}.png"   
     fig.savefig(name, format = 'png', dpi = 70)    
     print(f"Saved: {tape_no}_{observation}_{beam}_{i}.png")
+    if i % 20 == 0:
+        plt.close('all')
 
     
     
