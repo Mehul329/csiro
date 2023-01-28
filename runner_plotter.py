@@ -4,7 +4,7 @@ import numpy as np
 #%% Input
 
 a = argparse.ArgumentParser()
-a.add_argument('-n', type = int, help = 'Type the node number (1-34)')
+a.add_argument('-n', type = int, help = 'Type the node number (1-33)')
 a.add_argument('-t', type = str, help = 'Type the full path of tape directory with / at the end')
 args = a.parse_args()
 node = args.n
@@ -26,7 +26,6 @@ else:
     observations = observations[obs_blocks]
 
 for observation in observations:
-    print(f"/scratch2/aga017/output/{tape_no}/slotter_results/{tape_no}_{observation}_.txt")
     cmd = f"python3 {code} -t {tape_no} -o {observation}"
     print(cmd)    
-    #os.system(cmd)
+    os.system(cmd)

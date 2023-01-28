@@ -8,8 +8,8 @@ a.add_argument('-t', type = str, help = 'Give the tape name')
 a.add_argument('-o', type = int, help = 'Give the observation ')
 
 args = a.parse_args()
-tape = args.t
-obs = args.o
+tape_no = args.t
+observation = args.o
 
 def flatten(time_series, interval):
     xx = np.arange(len(time_series))
@@ -76,21 +76,23 @@ def plotter(matrix, dm, imp_start, bins, blocks):
     
     return final, sum_, start_blocks_av, max_f, matrix.header.foff, dm
 
-#tape = 'SM0006L6'
-#obs = 
-
-
-candidates = np.loadtxt('/Users/mehulagarwal/Desktop/slotter_results/tape_obs_.txt', dtype=str)
+candidates = f"/scratch2/aga017/output/{tape_no}/slotter_results/{tape_no}_{observation}_.txt"
+print(candidates)
+candidates = np.loadtxt(candidates, dtype=str)
 candidates = candidates[1:,:].astype(float)
     
 
-for i in range(len(candidates)):
+#for i in range(len(candidates)):
+for i in range(100):
     imp_start = int(float(candidates[i,0]))    
     dm = int(float(candidates[i,2]))
     bins = int(float(candidates[i,1]))
     SNR = round(float(candidates[i,3]),2)
     beam = int(candidates[i,-1])
-    
+    beam = "{:03}".format(beam)
+
+    print(f"/scratch2/aga017/utmost_data/{tape_no}/{observation}/FB/BEAM_{beam}/{observation}.fil")
+    '''
     filter_bank = '/Users/mehulagarwal/Desktop/tape/2018-03-01-14:17:51/FB/BEAM_009/2018-03-01-14:17:51.fil'
     
     out, sum_, idx, max_f, f_off, dm = plotter(filter_bank, dm, imp_start, bins, 1000)
@@ -126,8 +128,10 @@ for i in range(len(candidates)):
     ax1.axes.get_xaxis().set_visible(False)
     fig.savefig('/Users/mehulagarwal/Desktop/m.png', format = 'png', dpi = 100)
     plt.show()
-    
-    break
+    '''
+    name = f"{tape_no}_{observation}_{beam}_{i}"
+    print(name)
+    #break
     
     
     
