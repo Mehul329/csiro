@@ -122,9 +122,9 @@ for i in range(100):
     ax1.plot(idx, sum_[idx], '*')
     ax1.set_yticks([])
     ax1.axes.get_xaxis().set_visible(False)
-
-    name = f"{tape_no}_{observation}_{beam}_{i}.png"    
-    fig.savefig(name, format = 'png', dpi = 50)    
+    name = f"/scratch2/aga017/output/{tape_no}/plotter_results/{tape_no}_{observation}_{beam}_{i}.png"   
+    fig.savefig(name, format = 'png', dpi = 70)    
+    print(f"Saved: {tape_no}_{observation}_{beam}_{i}.png")
 
     
     
