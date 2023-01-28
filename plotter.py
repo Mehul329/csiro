@@ -5,7 +5,7 @@ import argparse
 
 a = argparse.ArgumentParser()
 a.add_argument('-t', type = str, help = 'Give the tape name')
-a.add_argument('-o', type = int, help = 'Give the observation ')
+a.add_argument('-o', type = str, help = 'Give the observation ')
 
 args = a.parse_args()
 tape_no = args.t
