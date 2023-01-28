@@ -77,7 +77,6 @@ def plotter(matrix, dm, imp_start, bins, blocks):
     return final, sum_, start_blocks_av, max_f, matrix.header.foff, dm
 
 candidates = f"/scratch2/aga017/output/{tape_no}/slotter_results/{tape_no}_{observation}_.txt"
-print(candidates)
 candidates = np.loadtxt(candidates, dtype=str)
 candidates = candidates[1:,:].astype(float)
     
@@ -91,15 +90,12 @@ for i in range(100):
     beam = int(candidates[i,-1])
     beam = "{:03}".format(beam)
 
-    print(f"/scratch2/aga017/utmost_data/{tape_no}/{observation}/FB/BEAM_{beam}/{observation}.fil")
-    '''
-    filter_bank = '/Users/mehulagarwal/Desktop/tape/2018-03-01-14:17:51/FB/BEAM_009/2018-03-01-14:17:51.fil'
+    filter_bank = f"/scratch2/aga017/utmost_data/{tape_no}/{observation}/FB/BEAM_{beam}/{observation}.fil"
     
-    out, sum_, idx, max_f, f_off, dm = plotter(filter_bank, dm, imp_start, bins, 1000)
+    out, sum_, idx, max_f, f_off, dm = plotter(filter_bank, dm, imp_start, bins, 50)
     
     dm = '%.3g' % dm
     bins = '%.3g' % (bins * ((2**16)/100000000))
-    
     
     fig = plt.figure(figsize=(20, 10))
     
@@ -126,12 +122,10 @@ for i in range(100):
     ax1.plot(idx, sum_[idx], '*')
     ax1.set_yticks([])
     ax1.axes.get_xaxis().set_visible(False)
-    fig.savefig('/Users/mehulagarwal/Desktop/m.png', format = 'png', dpi = 100)
-    plt.show()
-    '''
-    name = f"{tape_no}_{observation}_{beam}_{i}"
-    print(name)
-    #break
+
+    name = f"{tape_no}_{observation}_{beam}_{i}"    
+    fig.savefig('name.png', format = 'png', dpi = 50)    
+
     
     
     

@@ -14,6 +14,8 @@ code = '/home/aga017/codes/csiro/plotter.py'
 basedir = tape
 tape_no = tape.split('/')[-2]
 observations = np.array(os.listdir(basedir))
+print(np.where(observations == '2018-03-01-14:17:51'))
+'''
 obs_blocks = (np.linspace(0,9,10)+(node-1)*10).astype(int)
 if node == 33:
     if len(observations) - 1 < obs_blocks[-1]:
@@ -29,3 +31,4 @@ for observation in observations:
     cmd = f"python3 {code} -t {tape_no} -o {observation}"
     print(cmd)    
     os.system(cmd)
+'''
