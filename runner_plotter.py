@@ -26,7 +26,8 @@ else:
     observations = observations[obs_blocks]
 
 for observation in observations:
-    cmd = f"python3 {code} -t {tape_no} -o {observation}"
-    print(cmd)    
-    os.system(cmd)
+    if observation == '2018-03-01-14:17:51':
+        cmd = f"python3 {code} -t {tape_no} -o {observation}"
+        print(cmd)    
+        os.system(cmd)
 
