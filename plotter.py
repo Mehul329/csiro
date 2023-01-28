@@ -81,8 +81,7 @@ candidates = np.loadtxt(candidates, dtype=str)
 candidates = candidates[1:,:].astype(float)
     
 
-#for i in range(len(candidates)):
-for i in range(100):
+for i in range(len(candidates)):
     imp_start = int(float(candidates[i,0]))    
     dm = int(float(candidates[i,2]))
     bins = int(float(candidates[i,1]))
