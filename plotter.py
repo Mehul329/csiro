@@ -52,7 +52,7 @@ def plotter(matrix, dm, imp_start, bins, blocks):
         extra_block = start_blocks_av - blocks
         start = rem_start + extra_block * bins
 
-    #new_imp_start = imp - start
+    new_imp_start = imp - start
     
     rem_end = (c-(imp + bins))%bins
     end_blocks_av = (c-(imp + bins))//bins
@@ -74,7 +74,7 @@ def plotter(matrix, dm, imp_start, bins, blocks):
     
     dm = ((dm * ((2**16)/100000000)) * ((max_f - min_f) * 10**(6))**2) / (2.41 * 10**(-4))
     
-    return final, sum_, start_blocks_av, max_f, matrix.header.foff, dm
+    return final, sum_, new_imp_start//bins, max_f, matrix.header.foff, dm
 
 candidates = f"/scratch2/aga017/output/{tape_no}/slotter_results/{tape_no}_{observation}_.txt"
 candidates = np.loadtxt(candidates, dtype=str)
