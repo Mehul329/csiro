@@ -10,4 +10,4 @@
 
 tape=$1
 
-srun /home/aga017/codes/csiro/launch_job_slotter.sh $SLURM_ARRAY_TASK_ID $tape
+srun /home/aga017/codes/csiro/launch_job_plotter.sh $SLURM_ARRAY_TASK_ID $tape
