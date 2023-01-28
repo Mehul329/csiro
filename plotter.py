@@ -1,7 +1,15 @@
 import matplotlib.pyplot as plt
 from sigpyproc.readers import FilReader as F
 import numpy as np
+import argparse
 
+a = argparse.ArgumentParser()
+a.add_argument('-t', type = str, help = 'Give the tape name')
+a.add_argument('-o', type = int, help = 'Give the observation ')
+
+args = a.parse_args()
+tape = args.t
+obs = args.o
 
 def flatten(time_series, interval):
     xx = np.arange(len(time_series))
@@ -10,10 +18,6 @@ def flatten(time_series, interval):
     return time_series - y
 
 def plotter(matrix, dm, imp_start, bins, blocks):
-    fig = plt.figure()
-    ax0 = plt.subplot2grid(shape = (3, 1), loc = (0, 0), rowspan = 2, colspan = 1, fig = fig)
-    ax0.set_title(f"DM = {dm}, First seen = {imp_start}, bins = {bins}, S/R = {SNR}")
-    ax1 = plt.subplot2grid(shape = (3, 1), loc = (2, 0), rowspan = 1, colspan = 1, fig = fig, sharex = ax0)
     
     matrix = F(matrix)
     nsamps = matrix.header.nsamples
@@ -23,111 +27,115 @@ def plotter(matrix, dm, imp_start, bins, blocks):
     
     matrix = matrix.read_block(0, nsamps)
 
-    b = ((min_f/max_f)**2)*dm/(1-(min_f/max_f)**2)
-    a = max_f*((b)**0.5)
+    b = ((min_f/max_f)**2)*dm/(1-(min_f/max_f)**2) #constant in equation
+    a = max_f*((b)**0.5) #constant in equation
     freq = np.linspace(max_f, min_f, n_chans)
 
-    c = nsamps - int((a/(freq[-1]))**2 - b)
+    c = nsamps - int((a/(freq[-1]))**2 - b) #length of each channel
+    
+    imp = int((a/(freq[0]))**2 - b) + imp_start
 
-    final = []
+    final = np.empty([n_chans,c])
     for j in range(n_chans):
-        #imp = int((a/(freq[j]))**2 - b) + imp_start
-        
+
         temp_start = int((a/(freq[j]))**2 - b)
         temp_end = temp_start + c
         
-        channel = matrix[j][temp_start:temp_end]
-        
-        rem_start = imp_start%bins
-        start_blocks_av = (imp_start - rem_start)//bins
+        final[j] = matrix[j][temp_start:temp_end]
 
-        if start_blocks_av <= blocks:
-            start = rem_start
-        else:
-            extra_block = start_blocks_av - blocks
-            start = rem_start + extra_block * bins
+    rem_start = imp % bins
+    start_blocks_av = (imp - rem_start)//bins
 
-        rem_end = (len(a)-(imp_start + bins))%bins
-        end_blocks_av = (len(a)-(imp_start + bins))//bins
-
-        if end_blocks_av <= blocks:
-            end = rem_end
-        else:
-            extra_block = end_blocks_av - blocks
-            end = (len(a)-(imp_start + bins)) - extra_block * bins
-            
-        print(start, -end)
-        if rem_end == 0:    
-            print(a[start:])
-        else:
-            print(a[start:-end])
-            
-        
-        channel, idx_2 = average(channel,imp_start,bins)
-        final.append(channel)
-
-    sum_ = np.average(final, axis = 0)
-    sum_ =  flatten(sum_, 1)
-    sum_, start, end, max_ = middle(np.array(sum_), idx_2, 25)
-    final = np.array(final)
-    if end == -1:
-        final = final[:, start:]
+    if start_blocks_av <= blocks:
+        start = rem_start
     else:
-        final = final[:, start:end]
-    plt.subplots_adjust(hspace = 0)
-    ax0.imshow(final, aspect = 'auto', interpolation = 'None')
-    ax0.axes.get_xaxis().set_visible(False)
-    ax1.plot(sum_, 'r-')
-    #ax1.plot(max_, sum_[max_], 'b*')
-    plt.show()
-    return final, sum_
+        extra_block = start_blocks_av - blocks
+        start = rem_start + extra_block * bins
+
+    #new_imp_start = imp - start
+    
+    rem_end = (c-(imp + bins))%bins
+    end_blocks_av = (c-(imp + bins))//bins
+
+    if end_blocks_av <= blocks:
+        end = rem_end
+    else:
+        extra_block = end_blocks_av - blocks
+        end = (c-(imp + bins)) - blocks * bins
+
+    final = final[:,start:-end]
+
+    final = final.reshape(n_chans, len(final[0])//bins, bins).mean(axis=-1)
+    #plt.imshow(final, aspect = 'auto')
+
+    
+    sum_ = np.average(final, axis = 0)
+    sum_ = flatten(sum_, 5)
+    
+    dm = ((dm * ((2**16)/100000000)) * ((max_f - min_f) * 10**(6))**2) / (2.41 * 10**(-4))
+    
+    return final, sum_, start_blocks_av, max_f, matrix.header.foff, dm
+
+#tape = 'SM0006L6'
+#obs = 
 
 
-candidates = np.loadtxt('/u/aga017/Desktop/Output/SM0006L6_2018-03-01-14:17:51_BEAM_352.txt', dtype=str)
+candidates = np.loadtxt('/Users/mehulagarwal/Desktop/slotter_results/tape_obs_.txt', dtype=str)
 candidates = candidates[1:,:].astype(float)
     
 
-for i in range(1, len(candidates)):
-    dm = int(float(candidates[i,2])) * 20
-    imp_start = int(float(candidates[i,0])) * 20
+for i in range(len(candidates)):
+    imp_start = int(float(candidates[i,0]))    
+    dm = int(float(candidates[i,2]))
+    bins = int(float(candidates[i,1]))
     SNR = round(float(candidates[i,3]),2)
-    bins = int(float(candidates[i,1])) * 20
     beam = int(candidates[i,-1])
-    beam_file = str(np.core.defchararray.zfill(str(beam), 3))
-    filter_bank = '/u/aga017/Desktop/2018-03-01-14:17:51/BEAM_'+beam_file+'/2018-03-01-14:17:51.fil'
-    out, sum_ = plotter(filter_bank, dm, imp_start, bins)
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
+    
+    filter_bank = '/Users/mehulagarwal/Desktop/tape/2018-03-01-14:17:51/FB/BEAM_009/2018-03-01-14:17:51.fil'
+    
+    out, sum_, idx, max_f, f_off, dm = plotter(filter_bank, dm, imp_start, bins, 1000)
+    
+    dm = '%.3g' % dm
+    bins = '%.3g' % (bins * ((2**16)/100000000))
+    
+    
+    fig = plt.figure(figsize=(20, 10))
+    
+    ax0 = plt.subplot2grid(shape = (6, 1), loc = (0, 0), rowspan = 5, colspan = 1, fig = fig)
+    ax1 = plt.subplot2grid(shape = (6, 1), loc = (5, 0), rowspan = 1, colspan = 1, fig = fig, sharex = ax0)
+    plt.subplots_adjust(hspace = 0)
+    
+    
+    ax0.set_title(f"DM = {dm} pc.cm$^{3}$, Sample # = {imp_start} \n Pulse Width = {bins} sec, S/R = {SNR}", y = 1.05)
+    
+    ax0.imshow(out, aspect = 'auto', interpolation = 'None')
+
+    ax0.axes.get_xaxis().set_visible(False)
+    y_ticks = ax0.get_yticks()
+    new_ticks = [round((f_off*y + max_f),2) for y in y_ticks]    
+    ax0.set_yticklabels(new_ticks)
+    ax0.set_ylabel("Frequency in MHz")
+    ax2 = ax0.twinx()
+    ax2.set_ylim(40, 0)
+    ax2.set_yticks([0, 8, 16, 24, 32, 40])
+    ax2.set_ylabel("Channel #")
+
+    ax1.plot(sum_, 'r-')
+    ax1.plot(idx, sum_[idx], '*')
+    ax1.set_yticks([])
+    ax1.axes.get_xaxis().set_visible(False)
+    fig.savefig('/Users/mehulagarwal/Desktop/m.png', format = 'png', dpi = 100)
+    plt.show()
+    
+    break
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
