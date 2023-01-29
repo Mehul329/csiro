@@ -62,8 +62,13 @@ def plotter(matrix, dm, imp_start, bins, blocks):
     else:
         extra_block = end_blocks_av - blocks
         end = (c-(imp + bins)) - blocks * bins
-
-    final = final[:,start:-end]
+        
+    if end == 0:    
+        final = final[:,start:]
+    else:
+        final = final[:,start:-end]
+        
+        
 
     final = final.reshape(n_chans, len(final[0])//bins, bins).mean(axis=-1)
     #plt.imshow(final, aspect = 'auto')
