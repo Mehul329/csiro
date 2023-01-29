@@ -77,13 +77,14 @@ def plotter(matrix, dm, imp_start, bins, blocks):
     sum_ = np.average(final, axis = 0)
     sum_ = flatten(sum_, 5)
     
-    dm = ((dm * ((2**16)/100000000)) * ((max_f - min_f) * 10**(6))**2) / (2.41 * 10**(-4))
+    dm = ((dm * ((2**16)/100000000))*1000)/(4.15*((min_f/1000)**(-2) - (max_f/1000)**(-2)))
     
     return final, sum_, new_imp_start//bins, max_f, matrix.header.foff, dm
 
 candidates = f"/scratch2/aga017/output/{tape_no}/slotter_results/{tape_no}_{observation}_.txt"
 candidates = np.loadtxt(candidates, dtype=str)
 candidates = candidates[1:,:].astype(float)
+candidates = candidates[(candidates[:,-1] > 120) & (candidates[:,-1] < 160)]
     
 
 for i in range(len(candidates)):
@@ -101,14 +102,14 @@ for i in range(len(candidates)):
     dm = '%.3g' % dm
     bins = '%.3g' % (bins * ((2**16)/100000000))
     
-    fig = plt.figure(figsize=(20, 10))
+    fig = plt.figure(figsize=(18, 11))
     
     ax0 = plt.subplot2grid(shape = (6, 1), loc = (0, 0), rowspan = 5, colspan = 1, fig = fig)
     ax1 = plt.subplot2grid(shape = (6, 1), loc = (5, 0), rowspan = 1, colspan = 1, fig = fig, sharex = ax0)
     plt.subplots_adjust(hspace = 0)
     
     
-    ax0.set_title(f"DM = {dm} pc.cm$^{3}$, Sample # = {imp_start} \n Pulse Width = {bins} sec, S/R = {SNR}", y = 1.05)
+    ax0.set_title(f"DM = {dm} pc.cm$^{3}$, Sample # = {imp_start} \n Pulse Width = {bins} sec, S/N = {SNR}", y = 1.05)
     
     ax0.imshow(out, aspect = 'auto', interpolation = 'None')
 
