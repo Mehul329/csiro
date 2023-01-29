@@ -8,6 +8,5 @@
 #SBATCH --mail-user=aga017@csiro.au
 #SBATCH --array=1
 
-tape=$1
 
-srun /home/aga017/codes/csiro/launch_job_slotter_2.sh $SLURM_ARRAY_TASK_ID $tape
+srun /home/aga017/codes/csiro/launch_job_slotter_2.sh $SLURM_ARRAY_TASK_ID 
