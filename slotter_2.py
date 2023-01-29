@@ -68,7 +68,7 @@ obs_no = '2018-03-01-14:17:51'
 final_cands = np.array((tape, obs_no, 100, 40, 20, 5, 1.1))
 header = np.array(['Time', 'Boxcar', 'DM', 'SNR', 'BEAM'])
 final_cands = np.row_stack([header, final_cands])
-outname = '/scratch2/aga017/output/'+tape+'/'+tape+'_'+obs_no+'_.txt'
+outname = '/scratch2/aga017/output/'+tape+'/'+tape+'_'+obs_no+'__.txt'
 np.savetxt(outname, final_cands, fmt = '%s')
 #print(f"Total time taken for this obs : {time.time()-start}")
 
