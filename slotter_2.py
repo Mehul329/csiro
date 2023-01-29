@@ -13,7 +13,7 @@ def cluster_all_beams(tape, obs_no, time_scale, dm_scale, box_scale, beam_scale,
     beams = np.linspace(2,352,352-2+1).astype(int)
     beams = np.core.defchararray.zfill(beams.astype(str), 3)
     for beam in beams:
-        path = '/scratch2/aga017/output/'+tape+'/'+tape+'_'+obs_no+'_BEAM_'+beam+'.txt' 
+        path = '/scratch2/aga017/output/'+tape+'/'+'finder_results/'+tape+'_'+obs_no+'_BEAM_'+beam+'.txt' 
         print(path)
         if os.path.exists(path):
             beam_cand = np.loadtxt(path, dtype='str')
