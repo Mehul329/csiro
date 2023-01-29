@@ -65,7 +65,7 @@ def cluster_all_beams(tape, obs_no, time_scale, dm_scale, box_scale, beam_scale,
 
 tape = 'SM0006L6'
 obs_no = '2018-03-01-14:17:51'
-final_cands = np.array((tape, obs_no, 100, 40, 20, 5, 1.1))
+final_cands = np.array(cluster_all_beams(tape, obs_no, 100, 40, 20, 5, 1.1))
 header = np.array(['Time', 'Boxcar', 'DM', 'SNR', 'BEAM'])
 final_cands = np.row_stack([header, final_cands])
 outname = '/scratch2/aga017/output/'+tape+'/'+tape+'_'+obs_no+'__.txt'
