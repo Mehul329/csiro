@@ -19,6 +19,8 @@ def flatten(time_series, interval):
 
 def plotter(matrix, dm, imp_start, bins, blocks):
     
+    dm  =  dm * 20
+    
     matrix = F(matrix)
     nsamps = matrix.header.nsamples
     n_chans = matrix.header.nchans
@@ -124,7 +126,7 @@ for i in range(len(candidates)):
     ax2.set_ylabel("Channel #")
 
     ax1.plot(sum_, 'r-')
-    ax1.plot(idx, sum_[idx], '*')
+    #ax1.plot(idx, sum_[idx], '*')
     ax1.set_yticks([])
     ax1.axes.get_xaxis().set_visible(False)
     name = f"/scratch2/aga017/output/{tape_no}/plotter_results/{tape_no}_{observation}_{beam}_{i}.png"   
