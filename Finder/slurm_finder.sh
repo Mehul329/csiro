@@ -1,5 +1,5 @@
 #!/bin/bash
-#
+# this code will run in this sequence slurm_finder (this code) -> 44 * (pre_slurm_finder -> finder_caller -> finder)
 #SBATCH --job-name=find_ulps_in_smirf
 #SBATCH --ntasks=1
 #SBATCH --time=08:00:00
@@ -10,4 +10,4 @@
 
 tape=$1
 
-srun /home/aga017/codes/csiro/launch_job.sh $SLURM_ARRAY_TASK_ID $tape
+srun /home/aga017/codes/csiro/Finder/pre_slurm_finder.sh $SLURM_ARRAY_TASK_ID $tape
