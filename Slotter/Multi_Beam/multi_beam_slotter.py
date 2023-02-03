@@ -1,8 +1,43 @@
+#this progrmam takes the tape number and observation number as the input and then
+#clusters all the potential candidates in that observation (whihc is basically 352 beams * candidates)
+#in 4 dimension using time, dm, average in width and beam number. This will prove to be useful if 
+#we can break single filter banks to small chunks. Or techincally, when reading the text file, check 
+#if the sample number is within the chosne chunk size. Right now the input for this program is tape number
+#and observation number. It will combine all the candidates from each beam into one array and run the
+#clustering. This program assumes that the potential canidates from finder program are stored 
+#in the following way:
+#/scratch2/aga017/output/tape_no/finder_results/tape_no_obs_no_Beam_no.txt
+
+#%% importing modules
+
 #import matplotlib.pyplot as plt
 from sklearn.cluster import DBSCAN
 import numpy as np
 import os
 import time
+import argparse
+
+#%% Input definition
+
+a = argparse.ArgumentParser()
+a.add_argument('-t', type = str, help = 'Type the tape no. like SM0006L6')
+a.add_argument('-o', type = str, help = 'Type the observation no. like 2018-03-01-14:17:51')
+a.add_argument('-t_s', type = float, help = 'Give the value for time scaling', default = 100)
+a.add_argument('-d_s', type = float, help = 'Give the value for DM scaling', default = 40)
+a.add_argument('-bx_s', type = float, help = 'Give the value for boxcar scaling', default = 20)
+a.add_argument('-b_s', type = float, help = 'Give the value for beam scaling', default = 5)
+a.add_argument('-r', type = float, help = 'Give the radius for clustering', default = 1.1)
+
+args = a.parse_args()
+tape = args.t
+observation = args.o
+time_scale = args.t_s
+dm_scale = args.d_s
+box_scale = args.bx_s
+beam_scale = args.b_s
+radius = args.r
+
+#%% Function definitions
 
 def cluster_all_beams(tape, obs_no, time_scale, dm_scale, box_scale, beam_scale, radius):
     #dm_scale = within what range of DM would you consider it one cluster = 40
@@ -57,44 +92,15 @@ def cluster_all_beams(tape, obs_no, time_scale, dm_scale, box_scale, beam_scale,
             #plt.plot(candidate[0], candidate[2], '-')
     #plt.ylim([0,250])
     #plt.show()
-    #plt.show()
-    #fig.savefig('3d11dasdadasd11plt.png', format = 'png', dpi = 300)   
+    #plt.show()   
     print(f'Reduced from {len(beam_cands)} to {n_clusters} to {count} in {time.time()-start}')
     
     return final_cands
 
-tape = 'SM0006L6'
-obs_no = '2018-03-01-14:17:51'
-final_cands = np.array(cluster_all_beams(tape, obs_no, 100, 40, 20, 5, 1.1))
+#%%Calling the function
+final_cands = np.array(cluster_all_beams(tape, observation, time_scale, dm_scale, box_scale, beam_scale, radius))
 header = np.array(['Time', 'Boxcar', 'DM', 'SNR', 'BEAM'])
 final_cands = np.row_stack([header, final_cands])
-outname = '/scratch2/aga017/output/'+tape+'/'+tape+'_'+obs_no+'__.txt'
+outname = '/scratch2/aga017/output/'+tape+'/'+tape+'_'+observation+'__.txt'
 np.savetxt(outname, final_cands, fmt = '%s')
-#print(f"Total time taken for this obs : {time.time()-start}")
 
-
-'''
-cands1 = np.loadtxt('/Users/mehulagarwal/Desktop/Finder_Results/obs/this_235.txt', dtype='str')
-cands1 = cands1[1:,:].astype(float)
-cands1 = np.column_stack([cands1, 235*np.ones_like(cands1[:,0])]) 
-
-cands2 = np.loadtxt('/Users/mehulagarwal/Desktop/Finder_Results/obs/this_236.txt', dtype='str')
-cands2 = cands2[1:,:].astype(float)
-cands2 = np.column_stack([cands2, 236*np.ones_like(cands2[:,0])]) 
-
-cands3 = np.loadtxt('/Users/mehulagarwal/Desktop/Finder_Results/obs/this_237.txt', dtype='str')
-cands3 = cands3[1:,:].astype(float)
-cands3 = np.column_stack([cands3, 237*np.ones_like(cands3[:,0])]) 
-
-cands4 = np.loadtxt('/Users/mehulagarwal/Desktop/Finder_Results/obs/this_238.txt', dtype='str')
-cands4 = cands4[1:,:].astype(float)
-cands4 = np.column_stack([cands4, 238*np.ones_like(cands4[:,0])]) 
-
-cands5 = np.loadtxt('/Users/mehulagarwal/Desktop/Finder_Results/obs/this_239.txt', dtype='str')
-cands5 = cands5[1:,:].astype(float)
-cands5 = np.column_stack([cands5, 239*np.ones_like(cands5[:,0])]) 
-
-cands = np.row_stack([cands1, cands2, cands3, cands4, cands5])
-
-final_cands = cluster_all_beams(cands, 100, 40, 20, 5, 1.1)
-'''

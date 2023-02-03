@@ -1,3 +1,14 @@
+#this porgram takes the text file as input from the finder program. It takes all the
+#text files from a single observation one by one, cluster each of them, select good candidates
+#and store all the beam info in one text file which is named after the observation. However, it 
+#assumes that those text files are located at the following location (you might have to move the
+#text files to the folder of the specific tape name after finder gives an output)
+#'/scratch2/aga017/output/tape_no/tape_no_observation_BEAM_no.txt' 
+#And the output from this code will be
+#'/scratch2/aga017/output/tape_no/tape_no_observation_.txt'
+
+#%% Input modules
+
 #import matplotlib.pyplot as plt
 from sklearn.cluster import DBSCAN
 import numpy as np
@@ -6,11 +17,11 @@ import time
 import argparse
 
 
-#%%
+#%% Input definition
 
 a = argparse.ArgumentParser()
-a.add_argument('-t', type = str, help = 'Type the tape without /')
-a.add_argument('-o', type = str, help = 'Type the observation without /')
+a.add_argument('-t', type = str, help = 'Type the tape no. like SM0006L6')
+a.add_argument('-o', type = str, help = 'Type the observation no. like 2018-03-01-14:17:51')
 a.add_argument('-t_s', type = float, help = 'Give the value for time scaling', default = 100)
 a.add_argument('-d_s', type = float, help = 'Give the value for DM scaling', default = 40)
 a.add_argument('-bx_s', type = float, help = 'Give the value for boxcar scaling', default = 20)
@@ -26,10 +37,9 @@ box_scale = args.bx_s
 beam_scale = args.b_s
 radius = args.r
 
-#%%
-#this porgram should go into each observation (327) and cluster data for all beams at once
-#it take the location of observations number
+#%% Function definitions
 
+#following program does clustering for each beam
 def cluster_each_beam(beam_cands, time_scale, dm_scale, box_scale, radius, beam_no):
     #dm_scale = within what range of DM would you consider it one cluster = 40
     #time_scale = within what range of time would you consider it one cluster = 50
@@ -59,7 +69,7 @@ def cluster_each_beam(beam_cands, time_scale, dm_scale, box_scale, radius, beam_
     cand_lst = np.array(cand_lst)
     return cand_lst
 
-
+#Following program cluster data (clustered data from previous fucntion) from multiple beams 
 def cluster_all_beams(filtered_beams, time_scale, dm_scale, beam_scale, radius):
     #dm_scale = within what range of DM would you consider it one cluster = 40
     #time_scale = within what range of time would you consider it one cluster = 50
@@ -94,6 +104,8 @@ def cluster_all_beams(filtered_beams, time_scale, dm_scale, beam_scale, radius):
     
     return final_cands
 
+#%%Providing beam numbers to the end of text file path. if the text file does not exist, 
+#the code does not stop running
 start = time.time()
 filtered_beams = []
 beams = np.linspace(2,352,352-2+1).astype(int)
