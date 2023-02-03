@@ -9,7 +9,7 @@ tape=$2
 
 echo "which python returns `which python`"
 
-echo "Executing: python runner.py -n $node -t $tape"
+echo "Executing: python finder_caller.py -n $node -t $tape"
 python /home/aga017/codes/csiro/Finder/finder_caller.py -n $node -t $tape
 
 echo "Done"
